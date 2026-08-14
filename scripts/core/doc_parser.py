@@ -75,14 +75,23 @@ def parse_markdown_to_html(md_text: str) -> str:
             if not in_code_block:
                 in_code_block = True
                 code_lang = stripped.lstrip("`").strip()
-                html_lines.append(f'<pre><code class="language-{code_lang}">')
+                if code_lang.lower() == "mermaid":
+                    html_lines.append('<pre class="mermaid">')
+                else:
+                    html_lines.append(f'<pre><code class="language-{code_lang}">')
             else:
                 in_code_block = False
-                html_lines.append('</code></pre>')
+                if code_lang.lower() == "mermaid":
+                    html_lines.append('</pre>')
+                else:
+                    html_lines.append('</code></pre>')
             continue
 
         if in_code_block:
-            html_lines.append(html.escape(line))
+            if code_lang.lower() == "mermaid":
+                html_lines.append(line)
+            else:
+                html_lines.append(html.escape(line))
             continue
 
         # Close open lists/tables when encountering a blank line
@@ -350,6 +359,98 @@ def generate_consolidated_markdown(
         lines.append(f"> *{doc_subtitle}*")
         lines.append("")
 
+def format_doc_for_pdf(
+    body: str,
+    slug: str,
+    doc_title: str,
+    sec_num: int,
+    doc_idx: int,
+    is_cover_doc: bool = False
+) -> str:
+    """
+    Normalizes document headings for PDF book compilation.
+    - Level 1 (#) becomes Level 2 (## sec_num.doc_idx Title {#slug})
+    - Subheadings are shifted down (## -> ###, ### -> ####)
+    - Preserves raw tex / figures without orphan page breaks.
+    """
+    lines = body.splitlines()
+    new_lines = []
+    first_h1_handled = False
+
+    for line in lines:
+        stripped = line.strip()
+        h_match = re.match(r'^(#{1,5})\s+(.+)$', stripped)
+        if h_match:
+            level = len(h_match.group(1))
+            htext = h_match.group(2).strip()
+            htext_clean = re.sub(r'\s*\{#.*?\}', '', htext).strip()
+
+            if level == 1 and not first_h1_handled:
+                first_h1_handled = True
+                new_lines.append(f"## {sec_num}.{doc_idx} {htext_clean} {{#{slug}}}")
+            else:
+                new_hashes = "#" * (level + 1)
+                new_lines.append(f"{new_hashes} {htext_clean}")
+        else:
+            new_lines.append(line)
+
+    if not first_h1_handled:
+        new_lines.insert(0, f"## {sec_num}.{doc_idx} {doc_title} {{#{slug}}}\n")
+
+    return "\n".join(new_lines)
+
+
+def generate_consolidated_markdown(
+    docs: List[Dict[str, Any]],
+    config: Dict[str, Any],
+    output_path: Path,
+    root_dir: Path,
+    locale: str = "en-US"
+) -> str:
+    """
+    Combines scanned markdown docs into a single, beautifully structured Markdown file
+    with normalized heading hierarchy and clean LaTeX page breaks.
+    """
+    norm_locale = normalize_locale(locale)
+    doc_cfg = config.get("document", {})
+    meta_cfg = config.get("metadata", {})
+
+    doc_title = get_ui_string("doc_title", norm_locale)
+    doc_subtitle = get_ui_string("doc_subtitle", norm_locale)
+    doc_author = doc_cfg.get("author", "Matheus Ferreira")
+    doc_version = doc_cfg.get("version", "1.0.0")
+    doc_release = doc_cfg.get("release", "v1.0")
+
+    lbl_property = get_ui_string("property", norm_locale)
+    lbl_specification = get_ui_string("specification", norm_locale)
+    lbl_version = get_ui_string("version", norm_locale)
+    lbl_author = get_ui_string("author", norm_locale)
+    lbl_classification = get_ui_string("classification", norm_locale)
+    lbl_compiled_docs = get_ui_string("compiled_docs", norm_locale)
+    lbl_toc = get_ui_string("toc", norm_locale)
+
+    lines = []
+    
+    # Consolidated Document Frontmatter
+    lines.append("---")
+    lines.append(f'title: "{doc_title}"')
+    lines.append(f'subtitle: "{doc_subtitle}"')
+    lines.append(f'author: "{doc_author}"')
+    lines.append(f'version: "{doc_version}"')
+    lines.append(f'release: "{doc_release}"')
+    lines.append(f'language: "{norm_locale}"')
+    lines.append(f'organization: "{meta_cfg.get("organization", "DocShell Platform")}"')
+    lines.append(f'classification: "{meta_cfg.get("classification", "Public")}"')
+    lines.append("---")
+    lines.append("")
+
+    # Cover Page
+    lines.append(f"# {doc_title}")
+    lines.append("")
+    if doc_subtitle:
+        lines.append(f"> *{doc_subtitle}*")
+        lines.append("")
+
     # Document Metadata Table
     lines.append(f"| {lbl_property} | {lbl_specification} |")
     lines.append("| :--- | :--- |")
@@ -358,16 +459,18 @@ def generate_consolidated_markdown(
     lines.append(f"| **{lbl_classification}** | {meta_cfg.get('classification', 'Public')} |")
     lines.append(f"| **{lbl_compiled_docs}** | {len(docs)} files processed |")
     lines.append("")
-    lines.append("---")
+    lines.append("\\newpage")
     lines.append("")
 
-    # FUNCTIONAL TABLE OF CONTENTS (TOC) - Strictly spaced to prevent Pandoc merge
-    lines.append(f"## {lbl_toc}")
+    # FUNCTIONAL TABLE OF CONTENTS (TOC)
+    lines.append(f"# {lbl_toc} {{#sumario-toc}}")
     lines.append("")
 
     # Group documents by section
     section_map: Dict[str, List[Dict[str, Any]]] = {}
     for doc in docs:
+        if Path(doc["relative_path"]).name == "00-capa.md":
+            continue
         section_name = doc["section"]
         if section_name not in section_map:
             section_map[section_name] = []
@@ -389,10 +492,10 @@ def generate_consolidated_markdown(
             lines.append(f"- [{sec_num}.{item_idx} {disp_title}](#{d['slug']})")
         lines.append("")
 
-    lines.append("---")
+    lines.append("\\newpage")
     lines.append("")
 
-    # SECTION AND DOCUMENT BODIES
+    # SECTION AND DOCUMENT BODIES (Chapters & Sections)
     sec_num = 0
     for section_name, doc_list in section_map.items():
         sec_num += 1
@@ -403,7 +506,7 @@ def generate_consolidated_markdown(
         lines.append(f"# {sec_num}. {disp_sec} {{#{sec_slug}}}")
         lines.append("")
 
-        for d in doc_list:
+        for item_idx, d in enumerate(doc_list, 1):
             lines.append(f"<!-- doc: {d['relative_path']} -->")
             
             # Normalize images
@@ -413,25 +516,21 @@ def generate_consolidated_markdown(
             if norm_locale != "pt-BR":
                 norm_body = translate_text(norm_body, target_locale=norm_locale, source_locale="pt-BR", root_dir=root_dir)
 
-            # Inject unique ID into the first heading
-            heading_replaced = False
-            def add_slug_to_first_heading(m):
-                nonlocal heading_replaced
-                heading_replaced = True
-                hashes = m.group(1)
-                htext = m.group(2).strip()
-                return f"{hashes} {htext} {{#{d['slug']}}}"
+            disp_title = d["title"]
+            if norm_locale != "pt-BR":
+                disp_title = translate_text(d["title"], target_locale=norm_locale, source_locale="pt-BR", root_dir=root_dir)
 
-            body_with_id = re.sub(r'^(#+)\s+(.*?)(?:\s*\{#.*?\})?$', add_slug_to_first_heading, norm_body, count=1, flags=re.MULTILINE)
-            if not heading_replaced:
-                disp_title = d["title"]
-                if norm_locale != "pt-BR":
-                    disp_title = translate_text(d["title"], target_locale=norm_locale, source_locale="pt-BR", root_dir=root_dir)
-                body_with_id = f"## {disp_title} {{#{d['slug']}}}\n\n" + body_with_id
+            # Format headings hierarchy
+            formatted_body = format_doc_for_pdf(
+                norm_body,
+                slug=d["slug"],
+                doc_title=disp_title,
+                sec_num=sec_num,
+                doc_idx=item_idx
+            )
 
-            lines.append(body_with_id)
+            lines.append(formatted_body)
             lines.append("")
-            lines.append("---")
             lines.append("")
 
     full_text = "\n".join(lines)

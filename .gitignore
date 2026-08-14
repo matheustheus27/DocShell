@@ -1,0 +1,60 @@
+# ==============================================================================
+# DocShell - Git Ignore Configuration
+# ==============================================================================
+
+# Build & Distribution Artifacts
+dist/
+build/
+out/
+target/
+
+# Generated Publication & Metadata Files
+publication/.pdf-meta.tex
+publication/documento-completo.md
+publication/search_index.json
+publication/translations_cache.json
+.mermaid-config.json
+mermaid-filter.err
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js Dependencies & Logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Docker Volumes & Local Persistent Data
+ollama_data/
+redis_data/
+rag_data/
+*.log
+
+# Temporary & Editor Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.tmp
+*.temp
+
+# Local Environment Variables
+.env
+.env.local
+.env.*.local

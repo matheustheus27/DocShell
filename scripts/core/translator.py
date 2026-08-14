@@ -16,6 +16,7 @@ Connects to local Ollama instance (e.g., TranslateGemma / Gemma2 / LLaMA3.2)
 with local cache in publication/translations_cache.json and built-in UI dictionaries.
 """
 
+import hashlib
 import json
 import os
 import re
@@ -525,6 +526,32 @@ def query_ollama_translate(
             continue
 
     return None
+
+
+def load_translations_cache(root_dir: Optional[Path] = None) -> Dict[str, str]:
+    if root_dir is None:
+        root_dir = ROOT_DIR
+    cache_file = Path(root_dir) / "publication" / "translations_cache.json"
+    if cache_file.exists():
+        try:
+            return json.loads(cache_file.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def save_translations_cache(arg1: Any, arg2: Any = None) -> None:
+    if isinstance(arg1, dict):
+        cache, root_dir = arg1, arg2 or ROOT_DIR
+    else:
+        root_dir, cache = arg1 or ROOT_DIR, arg2 or {}
+    pub_dir = Path(root_dir) / "publication"
+    pub_dir.mkdir(parents=True, exist_ok=True)
+    cache_file = pub_dir / "translations_cache.json"
+    try:
+        cache_file.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass
 
 
 def translate_text(

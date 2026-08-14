@@ -38,6 +38,13 @@ if [ -f "$ROOT_DIR/scripts/requirements.txt" ]; then
     $PYTHON -m pip install -r "$ROOT_DIR/scripts/requirements.txt"
 fi
 
+if command -v npm &>/dev/null; then
+    if ! command -v mermaid-filter &>/dev/null; then
+        echo "[+] Installing mermaid-filter globally for PDF diagram support..."
+        npm install -g mermaid-filter --silent || true
+    fi
+fi
+
 echo "================================================================="
 echo "  [OK] Installation completed successfully!"
 echo "================================================================="

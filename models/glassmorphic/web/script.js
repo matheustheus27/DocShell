@@ -133,7 +133,67 @@ document.addEventListener('DOMContentLoaded', async () => {
   initTocSpy();
   initCopyCode();
   initAiAssistant();
+  initMermaid();
 });
+
+// Mermaid.js Diagram Initializer and Renderer
+function initMermaid() {
+  if (typeof mermaid !== 'undefined') {
+    try {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        themeVariables: {
+          darkMode: true,
+          background: 'transparent',
+          mainBkg: '#0f172a',
+          nodeBorder: '#6366f1',
+          nodeTextColor: '#f8fafc',
+          clusterBkg: 'rgba(30, 41, 59, 0.7)',
+          clusterBorder: 'rgba(99, 102, 241, 0.4)',
+          defaultLinkColor: '#38bdf8',
+          lineColor: '#38bdf8',
+          arrowheadColor: '#38bdf8',
+          titleColor: '#e0e7ff',
+          edgeLabelBackground: '#1e293b',
+          actorBkg: '#0f172a',
+          actorBorder: '#6366f1',
+          actorTextColor: '#f8fafc',
+          actorLineColor: '#38bdf8',
+          signalColor: '#38bdf8',
+          signalTextColor: '#f8fafc',
+          labelBoxBkgColor: '#0f172a',
+          labelBoxBorderColor: '#6366f1',
+          labelTextColor: '#f8fafc',
+          loopTextColor: '#f8fafc',
+          noteBkgColor: '#1e293b',
+          noteBorderColor: '#6366f1',
+          noteTextColor: '#f8fafc',
+          fontFamily: 'Segoe UI, Roboto, -apple-system, BlinkMacSystemFont, sans-serif',
+          fontSize: '13px'
+        },
+        securityLevel: 'loose'
+      });
+      renderMermaidDiagrams();
+    } catch (err) {
+      console.warn('[DocShell] Mermaid initialization warning:', err);
+    }
+  }
+}
+
+async function renderMermaidDiagrams() {
+  if (typeof mermaid === 'undefined') return;
+  try {
+    const nodes = document.querySelectorAll('pre.mermaid:not([data-processed="true"]), div.mermaid:not([data-processed="true"])');
+    if (nodes.length > 0) {
+      await mermaid.run({
+        nodes: Array.from(nodes)
+      });
+    }
+  } catch (err) {
+    console.warn('[DocShell] Mermaid render warning:', err);
+  }
+}
 
 // Load multi-language translated doc datasets if available
 async function loadTranslationsData() {
@@ -248,6 +308,8 @@ async function applyLocale(locale) {
         st.innerText = sectionNames[currentText];
       }
     });
+
+    renderMermaidDiagrams();
   }
 
   // 1. If available in memory cache
@@ -355,8 +417,12 @@ function formatMarkdown(text) {
   const codeBlocks = [];
   html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (m, lang, code) => {
     const idx = codeBlocks.length;
-    const escCode = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    codeBlocks.push(`<pre><code class="language-${lang}">${escCode}</code></pre>`);
+    if (lang && lang.toLowerCase() === 'mermaid') {
+      codeBlocks.push(`<pre class="mermaid">${code.trim()}</pre>`);
+    } else {
+      const escCode = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      codeBlocks.push(`<pre><code class="language-${lang}">${escCode}</code></pre>`);
+    }
     return `%%%CODEBLOCK_${idx}%%%`;
   });
 
@@ -468,12 +534,12 @@ function initTocSpy() {
 
 // Copy Code Blocks
 function initCopyCode() {
-  const codeBlocks = document.querySelectorAll('pre');
+  const codeBlocks = document.querySelectorAll('pre:not(.mermaid)');
   const locale = detectUserLocale();
   const dict = DOCSHELL_I18N[locale] || DOCSHELL_I18N['pt-BR'];
 
   codeBlocks.forEach(pre => {
-    if (pre.querySelector('.copy-code-btn')) return;
+    if (pre.classList.contains('mermaid') || pre.querySelector('.copy-code-btn')) return;
 
     const btn = document.createElement('button');
     btn.className = 'copy-code-btn';

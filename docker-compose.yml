@@ -87,6 +87,7 @@ services:
   # 4. Backend RAG Service (FastAPI + Vector Embeddings + TranslateGemma + Redis + Datadog)
   rag:
     image: docshell-rag:local
+    pull_policy: build
     build:
       context: .
       dockerfile: scripts/docker/Dockerfile.rag
@@ -128,6 +129,7 @@ services:
   # 5. Web Server (Nginx + Reverse Proxy /api -> RAG)
   web:
     image: docshell-web:local
+    pull_policy: build
     build:
       context: .
       dockerfile: scripts/docker/Dockerfile.web

@@ -7,22 +7,26 @@ description: "Contexto, motivação e capacidades centrais do DocShell"
 
 O **DocShell** foi projetado para resolver a complexidade de manter documentações sincronizadas, profissionais e facilmente consumíveis por diferentes perfis de usuários (engenheiros, gestores, clientes e novos integrantes de equipe).
 
-```
-   +-------------------------------------------------------------+
-   |                     DOCSHELL ENGINE                         |
-   |                                                             |
-   |   Markdown Docs (docs/) ---> Smart Numeric Parser           |
-   |                                  |                          |
-   |            +---------------------+---------------------+    |
-   |            |                                           |    |
-   |            v                                           v    |
-   |    PDF Generator Engine                       Web Generators |
-   |  (Pandoc + XeLaTeX / HTML)              (Python / PHP / JS)  |
-   |            |                                           |    |
-   |            v                                           v    |
-   |     dist/pdf/*.pdf                            dist/webpage/  |
-   |                                                             |
-   +-------------------------------------------------------------+
+```mermaid
+flowchart TD
+    subgraph DocshellEngine [DOCSHELL ENGINE]
+        A["📄 Markdown Docs (docs/)"] --> B["⚙️ Smart Numeric Parser"]
+        B --> C["📑 Table of Contents (TOC)"]
+        
+        C --> D["📕 PDF Engine (XeLaTeX)<br/>dist/pdf/*.pdf"]
+        C --> E["🌐 Web Generators"]
+        
+        E --> F["🐍 Python Generator"]
+        E --> G["🐘 PHP Generator"]
+        E --> H["⚡ Node.js Generator"]
+        
+        F --> I["🔍 dist/webpage/ + RAG Engine"]
+        G --> I
+        H --> I
+        
+        D --> J["📚 PDF Books"]
+        I --> K["🖥️ Searchable Webpage"]
+    end
 ```
 
 ## Principais Recursos

@@ -30,6 +30,97 @@ from scripts.core.config_loader import load_publication_config, load_theme_model
 from scripts.core.doc_parser import scan_docs_directory, build_search_and_rag_index, slugify, parse_markdown_to_html, parse_inline
 from scripts.core.translator import SUPPORTED_LOCALES, get_ui_string, normalize_locale, translate_document_content
 
+MERMAID_THEMES = {
+    "glassmorphic": {
+        "theme": "base",
+        "themeVariables": {
+            "darkMode": True,
+            "background": "transparent",
+            "mainBkg": "#0f172a",
+            "nodeBorder": "#6366f1",
+            "nodeTextColor": "#f8fafc",
+            "clusterBkg": "rgba(30, 41, 59, 0.7)",
+            "clusterBorder": "rgba(99, 102, 241, 0.4)",
+            "defaultLinkColor": "#38bdf8",
+            "lineColor": "#38bdf8",
+            "arrowheadColor": "#38bdf8",
+            "titleColor": "#e0e7ff",
+            "edgeLabelBackground": "#1e293b",
+            "actorBkg": "#0f172a",
+            "actorBorder": "#6366f1",
+            "actorTextColor": "#f8fafc",
+            "fontFamily": "Segoe UI, Roboto, -apple-system, BlinkMacSystemFont, sans-serif",
+            "fontSize": "13px"
+        }
+    },
+    "modern-dark": {
+        "theme": "base",
+        "themeVariables": {
+            "darkMode": True,
+            "background": "transparent",
+            "mainBkg": "#090d16",
+            "nodeBorder": "#8b5cf6",
+            "nodeTextColor": "#f1f5f9",
+            "clusterBkg": "#0d1322",
+            "clusterBorder": "#1e293b",
+            "defaultLinkColor": "#38bdf8",
+            "lineColor": "#38bdf8",
+            "arrowheadColor": "#38bdf8",
+            "titleColor": "#c4b5fd",
+            "edgeLabelBackground": "#131b2e",
+            "actorBkg": "#090d16",
+            "actorBorder": "#8b5cf6",
+            "actorTextColor": "#f1f5f9",
+            "fontFamily": "Plus Jakarta Sans, JetBrains Mono, sans-serif",
+            "fontSize": "13px"
+        }
+    },
+    "corporate": {
+        "theme": "base",
+        "themeVariables": {
+            "darkMode": False,
+            "background": "transparent",
+            "mainBkg": "#ffffff",
+            "nodeBorder": "#2563eb",
+            "nodeTextColor": "#0f172a",
+            "clusterBkg": "#f8fafc",
+            "clusterBorder": "#cbd5e1",
+            "defaultLinkColor": "#1e3a8a",
+            "lineColor": "#1e3a8a",
+            "arrowheadColor": "#1e3a8a",
+            "titleColor": "#1e3a8a",
+            "edgeLabelBackground": "#ffffff",
+            "actorBkg": "#ffffff",
+            "actorBorder": "#2563eb",
+            "actorTextColor": "#0f172a",
+            "fontFamily": "IBM Plex Sans, sans-serif",
+            "fontSize": "13px"
+        }
+    },
+    "minimal": {
+        "theme": "base",
+        "themeVariables": {
+            "darkMode": False,
+            "background": "transparent",
+            "mainBkg": "#ffffff",
+            "nodeBorder": "#374151",
+            "nodeTextColor": "#111827",
+            "clusterBkg": "#fafafa",
+            "clusterBorder": "#e5e7eb",
+            "defaultLinkColor": "#111827",
+            "lineColor": "#111827",
+            "arrowheadColor": "#111827",
+            "titleColor": "#111827",
+            "edgeLabelBackground": "#ffffff",
+            "actorBkg": "#ffffff",
+            "actorBorder": "#374151",
+            "actorTextColor": "#111827",
+            "fontFamily": "Segoe UI, Arial, sans-serif",
+            "fontSize": "13px"
+        }
+    }
+}
+
 
 def build_python_site(model_name: str | None = None, locale: str = "pt-BR") -> int:
     config = load_publication_config()
@@ -81,6 +172,8 @@ def build_python_site(model_name: str | None = None, locale: str = "pt-BR") -> i
     
     css_file = model_dir / "web" / "style.css"
     js_file = model_dir / "web" / "script.js"
+    if not js_file.exists():
+        js_file = ROOT_DIR / "models" / "glassmorphic" / "web" / "script.js"
     
     if css_file.exists():
         shutil.copy2(css_file, dist_assets / "style.css")
@@ -165,6 +258,14 @@ def build_python_site(model_name: str | None = None, locale: str = "pt-BR") -> i
     ai_btn_lbl = get_ui_string("ai_assistant", norm_locale)
     ai_greeting_lbl = get_ui_string("ai_greeting", norm_locale)
 
+    mermaid_cfg = MERMAID_THEMES.get(target_model, MERMAID_THEMES["glassmorphic"])
+    mermaid_init_dict = {
+        "startOnLoad": True,
+        "securityLevel": "loose",
+        **mermaid_cfg
+    }
+    mermaid_init_js = json.dumps(mermaid_init_dict, indent=2)
+
     # 7. HTML Template
     html_template = f'''<!DOCTYPE html>
 <html lang="{norm_locale}">
@@ -174,6 +275,12 @@ def build_python_site(model_name: str | None = None, locale: str = "pt-BR") -> i
     <title>{html.escape(title)} - {html.escape(release)}</title>
     <meta name="description" content="{html.escape(subtitle)}">
     <link rel="stylesheet" href="assets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        if (typeof mermaid !== 'undefined') {{
+            mermaid.initialize({mermaid_init_js});
+        }}
+    </script>
 </head>
 <body>
     <!-- Top Navigation Header -->

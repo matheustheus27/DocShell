@@ -53,6 +53,72 @@ def write_pdf_meta(config: dict, output_path: Path, locale: str = "en-US"):
     output_path.write_text(content, encoding="utf-8")
 
 
+def write_mermaid_pdf_config(model_name: str, root_dir: Path):
+    """
+    Writes .mermaid-config.json matching the visual model theme for mermaid-filter.
+    """
+    import json
+    model = (model_name or "glassmorphic").lower().strip()
+    configs = {
+        "glassmorphic": {
+            "theme": "neutral",
+            "themeVariables": {
+                "primaryColor": "#EEF2FF",
+                "primaryTextColor": "#1E1B4B",
+                "primaryBorderColor": "#6366F1",
+                "lineColor": "#4338CA",
+                "secondaryColor": "#F8FAFC",
+                "tertiaryColor": "#F1F5F9",
+                "fontFamily": "Segoe UI, Arial, sans-serif",
+                "fontSize": "13px"
+            }
+        },
+        "corporate": {
+            "theme": "neutral",
+            "themeVariables": {
+                "primaryColor": "#EFF6FF",
+                "primaryTextColor": "#1E3A8A",
+                "primaryBorderColor": "#2563EB",
+                "lineColor": "#1E3A8A",
+                "secondaryColor": "#F8FAFC",
+                "tertiaryColor": "#F1F5F9",
+                "fontFamily": "Segoe UI, Arial, sans-serif",
+                "fontSize": "13px"
+            }
+        },
+        "modern-dark": {
+            "theme": "neutral",
+            "themeVariables": {
+                "primaryColor": "#F5F3FF",
+                "primaryTextColor": "#0F172A",
+                "primaryBorderColor": "#8B5CF6",
+                "lineColor": "#7C3AED",
+                "secondaryColor": "#FAF5FF",
+                "tertiaryColor": "#F3E8FF",
+                "fontFamily": "Segoe UI, Arial, sans-serif",
+                "fontSize": "13px"
+            }
+        },
+        "minimal": {
+            "theme": "neutral",
+            "themeVariables": {
+                "primaryColor": "#FFFFFF",
+                "primaryTextColor": "#111827",
+                "primaryBorderColor": "#374151",
+                "lineColor": "#111827",
+                "secondaryColor": "#F9FAFB",
+                "tertiaryColor": "#F3F4F6",
+                "fontFamily": "Segoe UI, Arial, sans-serif",
+                "fontSize": "13px"
+            }
+        }
+    }
+
+    cfg = configs.get(model, configs["glassmorphic"])
+    config_file = root_dir / ".mermaid-config.json"
+    config_file.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+
+
 def compile_pdf(model_name: Optional[str] = None, locale: str = "en-US") -> int:
     """
     Compiles Markdown documentation into a styled, versioned PDF in requested locale.
@@ -69,12 +135,14 @@ def compile_pdf(model_name: Optional[str] = None, locale: str = "en-US") -> int:
     docs = scan_docs_directory(root_dir / "docs")
     generate_consolidated_markdown(docs, config, source_md, root_dir, locale=norm_locale)
 
-    # 2. Resolve visual model and headers
+    # 2. Resolve visual model, headers, and mermaid theme configuration
     target_model = (model_name or config.get("theme", {}).get("default_model", "glassmorphic")).lower().strip()
     model_dir = root_dir / "models" / target_model
     pdf_header = model_dir / "pdf" / "header.tex"
     if not pdf_header.exists():
         pdf_header = root_dir / "models" / "glassmorphic" / "pdf" / "header.tex"
+
+    write_mermaid_pdf_config(target_model, root_dir)
 
     meta_tex = pub_dir / ".pdf-meta.tex"
     write_pdf_meta(config, meta_tex, locale=norm_locale)
@@ -128,6 +196,14 @@ def compile_pdf(model_name: Optional[str] = None, locale: str = "en-US") -> int:
         "-V", "colorlinks=true",
         "-o", str(pdf_output_path)
     ]
+
+    # Detect mermaid-filter for rendering Mermaid diagrams in PDF
+    mermaid_filter = shutil.which("mermaid-filter") or shutil.which("mermaid-filter.cmd")
+    if mermaid_filter:
+        print(f"  [DocShell] Mermaid diagram filter detected: {mermaid_filter}")
+        cmd.extend(["--filter", mermaid_filter])
+    else:
+        print("  [DocShell] Tip: Install 'mermaid-filter' ('npm install -g mermaid-filter') to auto-render Mermaid diagrams in PDF.")
 
     print("[DocShell] Running Pandoc and XeLaTeX...")
     res = subprocess.run(cmd, cwd=str(root_dir))

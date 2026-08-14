@@ -55,7 +55,7 @@ foreach ($pkg in $packages) {
 }
 
 # 2. Install Python packages from requirements.txt
-Write-Host "`n[2/2] Installing Python libraries (pip)...`n" -ForegroundColor Yellow
+Write-Host "`n[2/3] Installing Python libraries (pip)...`n" -ForegroundColor Yellow
 Refresh-SessionPath
 $python = Resolve-PythonCommand
 
@@ -69,6 +69,25 @@ if (($null -ne (Get-Command $python -ErrorAction SilentlyContinue)) -or (Test-Pa
     }
 } else {
     Write-Host "[WARN] Python not detected in current session. Restart terminal to refresh environment variables." -ForegroundColor Yellow
+}
+
+# 3. Optional Node CLI tools (mermaid-filter for PDF diagrams)
+Write-Host "`n[3/3] Checking Node.js tools (mermaid-filter)...`n" -ForegroundColor Yellow
+Refresh-SessionPath
+$npmCmd = Get-Command "npm" -ErrorAction SilentlyContinue
+if ($npmCmd) {
+    $mfExists = Get-Command "mermaid-filter" -ErrorAction SilentlyContinue
+    if (-not $mfExists) {
+        Write-Host "  [+] Installing mermaid-filter globally for PDF diagram support..." -ForegroundColor Cyan
+        try {
+            & npm install -g mermaid-filter --silent
+            Write-Host "  [OK] mermaid-filter installed successfully." -ForegroundColor Green
+        } catch {
+            Write-Host "  [WARN] Could not auto-install mermaid-filter: $($_.Exception.Message)" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "  [OK] mermaid-filter is already installed." -ForegroundColor Green
+    }
 }
 
 Write-Host "`n=================================================================" -ForegroundColor Cyan

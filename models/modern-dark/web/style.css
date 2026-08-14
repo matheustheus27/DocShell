@@ -39,3 +39,23 @@ body { font-family: var(--font-body); background: var(--bg-main); color: var(--t
 .content-card h1 { color: #ffffff; font-size: 2.2rem; border-bottom: 1px solid var(--border-main); padding-bottom: 0.8rem; margin-bottom: 1.2rem; }
 .content-card h2 { color: #a78bfa; font-size: 1.5rem; margin: 1.8rem 0 0.8rem 0; }
 .content-card pre { background: #06090e; border: 1px solid #1e293b; color: #e2e8f0; padding: 1.2rem; border-radius: 8px; overflow-x: auto; margin: 1.2rem 0; }
+.content-card pre.mermaid,
+.mermaid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0d1322 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  margin: 1.8rem 0;
+  overflow-x: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.mermaid svg { max-width: 100%; height: auto; display: block; }
+.mermaid .cluster rect { fill: #131b2e !important; stroke: #1e293b !important; rx: 8px !important; }
+.mermaid .cluster .nodeLabel { color: #c4b5fd !important; fill: #c4b5fd !important; font-weight: 700 !important; }
+.mermaid .node rect, .mermaid .node circle { fill: #090d16 !important; stroke: #8b5cf6 !important; stroke-width: 1.5px !important; rx: 6px !important; }
+.mermaid .node .label { color: #f1f5f9 !important; fill: #f1f5f9 !important; font-size: 13px !important; }
+.mermaid .edgePath .path { stroke: #38bdf8 !important; stroke-width: 1.8px !important; }
+.mermaid .marker { fill: #38bdf8 !important; stroke: #38bdf8 !important; }

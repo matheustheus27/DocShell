@@ -48,18 +48,33 @@
 \fancyhead[R]{\textcolor{gray}{\small \DocRelease}}
 \fancyfoot[R]{\textcolor{DarkPurple}{\small\textbf{\thepage}}}
 
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{DarkTitle}}
+  {\filleft\Huge\textcolor{DarkPurple}{\thechapter}}
+  {1ex}
+  {\titlerule\vspace{1ex}\filright}
+\titlespacing*{\chapter}{0pt}{2ex plus 0.5ex minus .2ex}{2ex plus .2ex}
+
 \titleformat{\section}
   {\normalfont\Large\bfseries\color{DarkTitle}}
   {\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{2.2ex plus 0.5ex minus .2ex}{1.2ex plus .2ex}
 
 \titleformat{\subsection}
   {\normalfont\large\bfseries\color{DarkPurple}}
   {\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{1.8ex plus 0.5ex minus .2ex}{0.8ex plus .2ex}
+
+% Prevent orphan and widow lines
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\raggedbottom
 
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>0.8\textheight 0.8\textheight\else\Gin@nat@height\fi}
+\def\maxheight{\ifdim\Gin@nat@height>0.7\textheight 0.7\textheight\else\Gin@nat@height\fi}
 \makeatother
 
 \providecommand{\tightlist}{%

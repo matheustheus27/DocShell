@@ -29,24 +29,21 @@
 1. **Executive & Versioned PDF Document** (`dist/pdf/{basename}-{release}.pdf`) using Pandoc and XeLaTeX.
 2. **Modern Interactive Website** (`dist/webpage/`) with real-time search filtering, dynamic sidebar, responsive typography, and an **embedded AI Assistant Chatbot powered by RAG (Ollama / Llama 3.2)**.
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           DOCSHELL ARCHITECTURE                         │
-│                                                                         │
-│   docs/ (Markdown) ──▶ Smart Numeric Parser ──▶ Table of Contents (TOC) │
-│                                │                                        │
-│            ┌───────────────────┴───────────────────┐                    │
-│            ▼                                       ▼                    │
-│      PDF Engine (XeLaTeX)                  Web Generators               │
-│    (dist/pdf/*.pdf)             ┌──────────────────┼──────────────────┐ │
-│                                 ▼                  ▼                  ▼ │
-│                            Python 🐍            PHP 🐘           Node.js ⚡
-│                                 │                  │                  │ │
-│                                 └──────────────────┴──────────────────┘ │
-│                                                    │                    │
-│                                                    ▼                    │
-│                                        dist/webpage/ + RAG Engine       │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A["docs/ (Markdown)"] --> B["Smart Numeric Parser"]
+    B --> C["Table of Contents (TOC)"]
+    
+    C --> D["PDF Engine (XeLaTeX)\ndist/pdf/*.pdf"]
+    C --> E["Web Generators"]
+    
+    E --> F["Python 🐍"]
+    E --> G["PHP 🐘"]
+    E --> H["Node.js ⚡"]
+    
+    F --> I["dist/webpage/ + RAG Engine"]
+    G --> I
+    H --> I
 ```
 
 ---
