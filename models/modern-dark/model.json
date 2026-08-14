@@ -1,0 +1,15 @@
+{
+  "id": "modern-dark",
+  "name": "Modern Dark Theme",
+  "description": "Visual escuro profundo com alto contraste, acentos neon e tipografia para desenvolvedores.",
+  "tokens": {
+    "colors": {
+      "primary": "#8b5cf6",
+      "accent": "#10b981",
+      "bg_main": "#090d16",
+      "surface": "#131b2e",
+      "border": "#1e293b",
+      "text_main": "#f1f5f9"
+    }
+  }
+}

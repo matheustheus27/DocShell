@@ -1,0 +1,18 @@
+{
+  "id": "corporate",
+  "name": "Corporate Theme",
+  "description": "Design formal e executivo em tons azul marinho e ardósia com foco em relatórios corporativos.",
+  "tokens": {
+    "colors": {
+      "primary": "#1e3a8a",
+      "primary_hover": "#172554",
+      "accent": "#0284c7",
+      "bg_start": "#f8fafc",
+      "bg_end": "#f1f5f9",
+      "surface": "#ffffff",
+      "border": "#cbd5e1",
+      "text_primary": "#0f172a",
+      "text_secondary": "#475569"
+    }
+  }
+}

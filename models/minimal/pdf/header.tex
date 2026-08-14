@@ -1,0 +1,62 @@
+% ==============================================================================
+% DocShell - Minimalist PDF Style Header (XeLaTeX)
+% ==============================================================================
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\geometry{
+  a4paper,
+  top=3cm,
+  bottom=3cm,
+  left=3.2cm,
+  right=3.2cm,
+  headheight=16pt
+}
+
+\defaultfontfeatures{Ligatures=TeX}
+\IfFontExistsTF{Segoe UI}{
+  \setmainfont{Segoe UI}
+}{
+  \setmainfont{Arial}
+}
+
+\setmonofont{Consolas}[Scale=0.92]
+
+\definecolor{MinBlack}{HTML}{111827}
+\definecolor{MinGray}{HTML}{6B7280}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=MinBlack,
+  filecolor=MinBlack,
+  urlcolor=MinBlack,
+  citecolor=MinGray
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\small\thepage}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{MinBlack}}
+  {\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{MinGray}}
+  {\thesubsection}{1em}{}
+
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>0.8\textheight 0.8\textheight\else\Gin@nat@height\fi}
+\makeatother
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}

@@ -1,0 +1,31 @@
+# Backend RAG (FastAPI + embeddings Ollama + índice vetorial numpy)
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY scripts/rag/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+COPY scripts/core /app/scripts/core
+COPY scripts/rag/app.py /app/app.py
+
+ENV PYTHONPATH=/app \
+    SITE_ROOT=/site \
+    RAG_CACHE_DIR=/data/rag \
+    OLLAMA_HOST=http://ollama:11434 \
+    OLLAMA_MODEL=llama3.2 \
+    OLLAMA_EMBED_MODEL=nomic-embed-text \
+    OLLAMA_TRANSLATE_MODEL=translategemma \
+    PYTHONUNBUFFERED=1
+
+EXPOSE 8080
+VOLUME ["/data/rag"]
+
+HEALTHCHECK --interval=10s --timeout=5s --retries=12 --start-period=20s \
+  CMD curl -fsS http://127.0.0.1:8080/healthz || exit 1
+
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]

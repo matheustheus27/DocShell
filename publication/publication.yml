@@ -1,0 +1,76 @@
+# ==============================================================================
+# DocShell - Configuração Central de Publicação
+# ==============================================================================
+
+document:
+  title: "DocShell - Framework de Documentação Inteligente"
+  subtitle: "Guia de Arquitetura, Engenharia e Especificação Técnica"
+  author: "Matheus Ferreira"
+  version: "1.0.0"
+  release: "v1.0"
+  language: "pt-BR"
+  
+  # Definições de saída
+  output:
+    pdf:
+      enabled: true
+      basename: "DocShell-Especificacao-Tecnica"
+      directory: "dist/pdf"
+    website:
+      enabled: true
+      directory: "dist/webpage"
+      # Runtime padrão para o site: 'python' (ou 'py'), 'php', 'javascript' (ou 'js')
+      default_runtime: "python"
+      # Porta padrão para o servidor local
+      port: 8000
+
+# Metadados institucionais do documento
+metadata:
+  organization: "DocShell Platform"
+  document_type: "Technical Specification & Architecture"
+  classification: "Public"
+  department: "Arquitetura e Engenharia de Software"
+  license: "Uso não comercial permitido (CC BY-NC 4.0)"
+  generated_by: "DocShell Multi-Platform Engine"
+
+# Informações de revisão
+review:
+  last_review:
+    date: "2026-08-13"
+  reviewers:
+    - "Arquiteto Principal"
+    - "Líder Técnico"
+
+# Configuração de Modelos / Temas visuais
+# Modelos disponíveis: 'glassmorphic', 'corporate', 'modern-dark', 'minimal'
+theme:
+  default_model: "glassmorphic"
+  
+  # Cores personalizadas globais (podem ser herdadas ou sobrescritas pelo modelo)
+  colors:
+    primary: "#6366f1"        # Indigo vibrante
+    primary_dark: "#4338ca"   # Indigo escuro
+    primary_light: "#818cf8"  # Indigo claro
+    accent: "#06b6d4"         # Cyan
+    accent_glow: "rgba(6, 182, 212, 0.4)"
+    background_dark: "#0f172a"# Slate escuro
+    background_light: "#ffffff"
+    text_dark: "#0f172a"
+    text_light: "#f8fafc"
+    surface: "rgba(30, 41, 59, 0.7)"
+    border: "rgba(255, 255, 255, 0.1)"
+
+# Configuração de IA e RAG
+ai_assistant:
+  enabled: true
+  provider: "ollama"           # 'ollama', 'openai', 'gemini'
+  ollama:
+    host: "http://127.0.0.1:11434"
+    chat_model: "llama3.2"     # ou 'mistral', 'qwen2.5', etc.
+    embed_model: "nomic-embed-text"
+    translate_model: "translategemma"
+  rag:
+    top_k: 5
+    chunk_size: 600
+    chunk_overlap: 100
+    index_cache_dir: ".rag_cache"

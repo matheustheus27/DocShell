@@ -1,0 +1,100 @@
+# ==============================================================================
+# DocShell - Cross-Platform Automation (Taskfile)
+# Documentation: https://taskfile.dev
+# Installation: winget install Task.Task (Windows) | sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d (Linux)
+# ==============================================================================
+
+version: "3"
+
+tasks:
+  default:
+    desc: "List all available DocShell tasks"
+    cmds:
+      - task --list
+
+  install:
+    desc: "Download and install all compilers, tools (Pandoc/LaTeX), runtimes, and libraries"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/install-dependencies.ps1
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/install-dependencies.sh
+        platforms: [linux, darwin]
+
+  document:
+    desc: "Consolidate Markdown docs into publication/documento-completo.md with numeric ordering and TOC"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/generate-document.ps1
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/generate-document.sh
+        platforms: [linux, darwin]
+
+  pdf:
+    desc: "Generate versioned PDF document (e.g.: task pdf -- -m 'Corporate')"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/generate-pdf.ps1 {{.CLI_ARGS}}
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/generate-pdf.sh {{.CLI_ARGS}}
+        platforms: [linux, darwin]
+
+  site:
+    desc: "Generate interactive Web documentation in dist/webpage (e.g.: task site -- -l 'Py' -m 'Glassmorphic')"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/generate-site.ps1 {{.CLI_ARGS}}
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/generate-site.sh {{.CLI_ARGS}}
+        platforms: [linux, darwin]
+
+  serve:
+    desc: "Start local documentation web server with RAG and AI (e.g.: task serve -- -l 'Py' -p 8000)"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/serve-site.ps1 {{.CLI_ARGS}}
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/serve-site.sh {{.CLI_ARGS}}
+        platforms: [linux, darwin]
+
+  validate:
+    desc: "Validate internal links and image asset references"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/validate-links.ps1
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/validate-links.sh
+        platforms: [linux, darwin]
+
+  docs:
+    desc: "Run full build pipeline (validate + document + pdf + site)"
+    cmds:
+      - task: validate
+      - task: document
+      - task: pdf
+      - task: site
+
+  report:
+    desc: "Generate and export Datadog telemetry and performance audit report"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/generate-report.ps1
+        platforms: [windows]
+      - cmd: python3 ./scripts/core/datadog_reporter.py --summary
+        platforms: [linux, darwin]
+
+  clean:
+    desc: "Clean generated build artifacts (dist/, documento-completo.md, etc.)"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/clean.ps1
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/clean.sh
+        platforms: [linux, darwin]
+
+  docker:up:
+    desc: "Start all services in Docker containers (Web + RAG + Ollama)"
+    cmds:
+      - docker-compose up -d
+
+  docker:down:
+    desc: "Stop all Docker containers"
+    cmds:
+      - docker-compose down
+
+  docker:logs:
+    desc: "Follow Docker container logs"
+    cmds:
+      - docker-compose logs -f

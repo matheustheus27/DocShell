@@ -1,0 +1,15 @@
+{
+  "id": "minimal",
+  "name": "Minimalist Theme",
+  "description": "Design tipográfico suíço ultra-limpo focado na leitura ágil e sem distrações visuais.",
+  "tokens": {
+    "colors": {
+      "primary": "#000000",
+      "accent": "#dc2626",
+      "bg_main": "#ffffff",
+      "surface": "#ffffff",
+      "border": "#e5e7eb",
+      "text_main": "#111827"
+    }
+  }
+}

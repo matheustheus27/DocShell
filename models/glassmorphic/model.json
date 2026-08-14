@@ -1,0 +1,29 @@
+{
+  "id": "glassmorphic",
+  "name": "Glassmorphic Theme",
+  "description": "Design moderno com efeitos de vidro translúcido, desfoque de fundo e gradientes vibrantes.",
+  "tokens": {
+    "colors": {
+      "primary": "#6366f1",
+      "primary_hover": "#4f46e5",
+      "accent": "#06b6d4",
+      "accent_glow": "rgba(6, 182, 212, 0.35)",
+      "bg_gradient_start": "#0b0f19",
+      "bg_gradient_end": "#1e1b4b",
+      "surface_glass": "rgba(30, 41, 59, 0.65)",
+      "surface_glass_hover": "rgba(51, 65, 85, 0.75)",
+      "border_glass": "rgba(255, 255, 255, 0.12)",
+      "text_primary": "#f8fafc",
+      "text_secondary": "#94a3b8",
+      "text_muted": "#64748b"
+    },
+    "effects": {
+      "blur": "blur(16px)",
+      "box_shadow": "0 8px 32px 0 rgba(0, 0, 0, 0.37)"
+    },
+    "typography": {
+      "font_family_sans": "'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+      "font_family_mono": "'JetBrains Mono', 'Fira Code', monospace"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "docshell-js-generator",
+  "version": "1.0.0",
+  "description": "DocShell Web documentation generator and server in Node.js",
+  "main": "serve_site.js",
+  "scripts": {
+    "build": "node build_site.js",
+    "start": "node serve_site.js"
+  },
+  "keywords": ["docshell", "markdown", "documentation", "rag"],
+  "author": "DocShell Team",
+  "license": "CC-BY-NC-4.0"
+}
