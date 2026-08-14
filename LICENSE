@@ -1,28 +1,105 @@
-LICENÇA DE USO NÃO COMERCIAL (NON-COMMERCIAL LICENSE)
-==============================================================================
-DocShell Framework - Automação de Documentação Técnica
+# LICENSE / LICENÇA - DOCSHELL
 
-Copyright (c) 2026 Matheus Ferreira / DocShell Contributors.
+[ENGLISH VERSION]
 
-É concedida permissão, a qualquer pessoa ou organização que obtenha uma cópia
-deste software e arquivos de documentação associados (o "Software"), para:
+Copyright (c) 2026 Matheus Thiago de Souza Ferreira. All rights reserved.
 
-1. Utilizar, executar, estudar, copiar, integrar e modificar o Software livremente
-   para fins pessoais, educacionais, de pesquisa ou uso interno corporativo;
-2. Distribuir cópias e versões modificadas do Software, desde que mantido este
-   aviso de direitos autorais e esta declaração de licença em todas as cópias.
+Author Identification & Jurisdiction:
+- Author: Matheus Thiago de Souza Ferreira
+- Nationality: Brazilian
+- Applicable Law: Brazilian Copyright Law (Lei nº 9.610/1998) and International Copyright Treaties (Berne Convention, Universal Copyright Convention, and WIPO Copyright Treaty).
 
-RESTRIÇÕES ESTATUTÁRIAS DE COMERCIALIZAÇÃO:
-------------------------------------------------------------------------------
-É EXPRESSAMENTE PROIBIDA A COMERCIALIZAÇÃO, VENDA, LICENCIAMENTO COMERCIAL,
-ALUGUEL, OU QUALQUER OUTRA FORMA DE EXPLORAÇÃO COMERCIAL DIRETA DESTE SOFTWARE,
-DE SEUS MÓDULOS OU DE OBRAS DERIVADAS DIRETAS.
+This software ("DocShell") is provided under a proprietary, source-available, 
+non-commercial license. Permission is hereby granted, free of charge, to any person 
+obtaining a copy of this software and associated documentation files, to view, use, 
+study, analyze for educational purposes, and modify the source code for strictly 
+personal or educational use, subject to the following strict conditions:
 
-O SOFTWARE É FORNECIDO "NO ESTADO EM QUE SE ENCONTRA" (AS IS), SEM NENHUM TIPO
-DE GARANTIA EXPRESSA OU IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO A, GARANTIAS
-DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UMA FINALIDADE ESPECÍFICA E NÃO VIOLAÇÃO. EM
-NENHUM CASO OS AUTORES OU TITULARES DE DIREITOS AUTORAIS SERÃO RESPONSÁVEIS
-POR QUALQUER RECLAMAÇÃO, DANOS OU OUTRA RESPONSABILIDADE, SEJA EM UMA AÇÃO
-DE CONTRATO, DELITO OU DE OUTRA FORMA, DECORRENTE DE OU EM CONEXÃO COM O
+1. COMMERCIAL USE PROHIBITION: The sale, rental, leasing, sublicensing, distribution 
+for profit, commercial deployment, embedding into commercial products, or any form 
+of direct or indirect commercial exploitation of this software, its source code, 
+modifications, binaries, or derivative works is expressly and strictly prohibited 
+worldwide.
+
+2. ATTRIBUTION AND COPYRIGHT RETENTION: All original copyrights and moral rights 
+remain exclusively and fully with the initial author (Matheus Thiago de Souza Ferreira). 
+Any redistribution, sharing, or reference to this software or parts of it must 
+include this original license notice in its entirety and prominently credit the 
+original author by name and repository link.
+
+3. CONTRIBUTIONS AND DEVELOPMENT CONTROLS: Pull Requests (PRs) and direct code 
+contributions to the official repository are explicitly disabled and rejected. 
+The community is invited to contribute exclusively via technical issue reporting, 
+architectural suggestions, and conceptual feedback through GitHub Issues and 
+Discussions. No intellectual property transfer from outside contributors is permitted 
+within the official codebase.
+
+4. FUTURE ARCHITECTURE AND PROPRIETARY CORE: The author reserves the absolute right, 
+in future versions (including but not limited to V2 and beyond), to modify the 
+licensing model, close specific software modules, or integrate the code with 
+proprietary closed-source algorithms hosted in private repositories. Reverse engineering, 
+decompilation, disassembly, or extraction of any compiled binaries, assemblies, or 
+closed-source components (.dll) associated with future versions or extensions of this 
+ecosystem is strictly prohibited under international intellectual property frameworks.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+===============================================================================
+
+[VERSÃO EM PORTUGUÊS]
+
+Copyright (c) 2026 Matheus Thiago de Souza Ferreira. Todos os direitos reservados.
+
+Identificação do Autor e Jurisdição:
+- Autor: Matheus Thiago de Souza Ferreira
+- Nacionalidade: Brasileiro
+- Legislação Aplicável: Lei de Direitos Autorais Brasileira (Lei nº 9.610/1998) e Tratados Internacionais de Direitos Autorais (Convenção de Berna, Convenção Universal sobre o Direito de Autor e Tratado da OMPI sobre Direitos Autorais).
+
+Este software ("DocShell") é fornecido sob uma licença proprietária de código 
+visível (source-available) e não comercial. Por meio deste documento, concede-se 
+permissão gratuita a qualquer pessoa que obtenha uma cópia deste software e arquivos 
+de documentação associados para visualizar, usar, estudar, analisar para fins 
+educacionais e modificar o código-fonte para uso estritamente pessoal ou educacional, 
+sujeita às seguintes condições estritas:
+
+1. PROIBIÇÃO DE COMERCIALIZAÇÃO: É expressamente proibida a venda, aluguel, locação, 
+sublicenciamento, distribuição com fins lucrativos, implantação comercial, incorporação 
+em produtos comerciais ou qualquer forma de exploração comercial direta ou indireta 
+deste software, de seu código-fonte, modificações, binários ou trabalhos derivados, 
+em âmbito mundial.
+
+2. RETENÇÃO DE DIREITOS E ATRIBUIÇÃO: Todos os direitos autorais originais e direitos 
+morais pertencem integralmente e exclusivamente ao autor inicial (Matheus Thiago de 
+Souza Ferreira). Qualquer redistribuição, compartilhamento ou referência a este software 
+ou partes dele deve, obrigatoriamente, incluir este aviso de licença original na íntegra 
+e mencionar o autor original de forma clara, visível e nominal, acompanhado do link do 
+repositório oficial.
+
+3. CONTROLE DE CONTRIBUIÇÕES E DESENVOLVIMENTO: O recebimento de Pull Requests (PRs) e 
+contribuições diretas de código no repositório oficial está explicitamente desativado e 
+rejeitado. A comunidade está autorizada a contribuir exclusivamente por meio do relato 
+de falhas técnicas (Issues), sugestões de arquitetura e debates conceituais via GitHub 
+Issues e GitHub Discussions. Nenhuma transferência de propriedade intelectual externa de 
+código é permitida no repositório oficial.
+
+4. EVOLUÇÃO E NÚCLEO PROPRIETÁRIO: O autor reserva-se o direito absoluto de, em versões 
+futuras (incluindo, mas não se limitando à V2 e posteriores), alterar o modelo de 
+licenciamento, fechar módulos específicos do software ou integrar o código a algoritmos 
+proprietários hospedados em repositórios privados. Fica estritamente proibida a engenharia 
+reversa, decompilação, desmontagem ou extração de quaisquer binários compilados, assemblies 
+ou componentes de código fechado (.dll) associados a versões futuras ou extensões deste 
+ecossistema, sob as proteções da legislação de propriedade intelectual nacional e internacional.
+
+O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU
+IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO ÀS GARANTIAS DE COMERCIALIZAÇÃO,
+ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO E NÃO INFRAÇÃO. EM NENHUM CASO OS
+AUTORES OU DETENTORES DE DIREITOS AUTORAIS SERÃO RESPONSÁVEIS POR QUALQUER
+REIVINDICAÇÃO, DANOS OU OUTRA RESPONSABILIDADE, SEJA EM AÇÃO DE CONTRATO,
+ATO ILÍCITO OU DE OUTRA FORMA, DECORRENTE DE, FORA OU EM CONEXÃO COM O
 SOFTWARE OU O USO OU OUTRAS NEGOCIAÇÕES NO SOFTWARE.
-==============================================================================
