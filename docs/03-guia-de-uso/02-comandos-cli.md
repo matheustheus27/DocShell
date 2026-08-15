@@ -41,7 +41,41 @@ task serve
 task serve -- -l "PHP"
 ```
 
-### 4. Validação e Limpeza
+### 4. Pipeline Completo de Build
+```bash
+# Executa build padrão (Python + Glassmorphic + Containers Python na porta 8000)
+task build
+
+# Build especificando linguagem e tema visual
+task build -- -l "PHP" -m "Corporate"
+task build -- -l "JS" -m "Glassmorphic"
+
+# Build completo de todos os perfis e linguagens
+task build -- --all
+```
+
+### 5. Containers Docker por Linguagem
+```bash
+# Iniciar stack Python (padrão)
+task docker:python
+
+# Iniciar stack PHP
+task docker:php
+
+# Iniciar stack Node.js
+task docker:node
+
+# Parar contêineres
+task docker:down
+```
+
+### 6. Relatório e Auditoria Datadog
+```bash
+# Gerar relatório consolidado de telemetria e integridade
+task report
+```
+
+### 7. Validação e Limpeza
 ```bash
 # Validar integridade de links e referências a imagens
 task validate
@@ -49,6 +83,19 @@ task validate
 # Limpar artefatos gerados
 task clean
 ```
+
+---
+
+## 📦 Pacote Standalone Autocontido (`dist/webpage/`)
+
+A pasta `dist/webpage/` gerada pelo build é **100% autocontida e portátil**. Qualquer pessoa pode copiar apenas essa pasta para outro ambiente e executar:
+
+```bash
+cd dist/webpage
+docker compose up -d
+```
+
+O compose local iniciará automaticamente o frontend, backend FastAPI, worker RabbitMQ, Redis e Ollama na porta **8000**.
 
 ---
 
@@ -63,8 +110,22 @@ make site LANG=py MODEL=glassmorphic
 make site LANG=php MODEL=corporate
 make site LANG=js MODEL=modern-dark
 
-# Executar servidor
+# Executar pipeline completo (Docs + PDF + Site + Docker)
+make build
+make build LANG=php MODEL=corporate
+make build ALL=1
+
+# Executar servidor local
 make serve LANG=py
+
+# Relatório Datadog
+make report
+
+# Containers Docker por profile
+make docker-python
+make docker-php
+make docker-node
+make docker-down
 
 # Validação e limpeza
 make validate

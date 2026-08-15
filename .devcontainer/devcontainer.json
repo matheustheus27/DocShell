@@ -1,12 +1,42 @@
 {
-    "name": "DocShell",
-    "dockerComposeFile": "../docker-compose.yml",
-    "service": "app",
-    "workspaceFolder": "/app",
+    "name": "DocShell Dev Container",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "docker-compose.devcontainer.yml"
+    ],
+    "service": "rag",
+    "workspaceFolder": "/workspace",
+    "shutdownAction": "stopCompose",
+    "remoteEnv": {
+        "PYTHONPATH": "/workspace:/workspace/scripts:/app"
+    },
     "customizations": {
         "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.analysis.extraPaths": [
+                    "/workspace",
+                    "/workspace/scripts",
+                    "/app"
+                ],
+                "python.autoComplete.extraPaths": [
+                    "/workspace",
+                    "/workspace/scripts",
+                    "/app"
+                ],
+                "terminal.integrated.env.linux": {
+                    "PYTHONPATH": "/workspace:/workspace/scripts:/app"
+                }
+            },
             "extensions": [
-                "dbaeumer.vscode-eslint"
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "redhat.vscode-yaml",
+                "bierner.markdown-mermaid",
+                "yzhang.markdown-all-in-one",
+                "ms-azuretools.vscode-docker"
             ]
         }
     }

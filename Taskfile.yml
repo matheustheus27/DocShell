@@ -61,19 +61,27 @@ tasks:
         platforms: [linux, darwin]
 
   docs:
-    desc: "Run full build pipeline (validate + document + pdf + site)"
+    desc: "Run full documentation pipeline (validate + document + pdf + site)"
     cmds:
       - task: validate
       - task: document
       - task: pdf
       - task: site
 
+  build:
+    desc: "Run full build pipeline (validate + doc + pdf + site + docker containers with optional -l, -m, --all)"
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/build.ps1 {{.CLI_ARGS}}
+        platforms: [windows]
+      - cmd: bash ./scripts/cli/linux/build.sh {{.CLI_ARGS}}
+        platforms: [linux, darwin]
+
   report:
     desc: "Generate and export Datadog telemetry and performance audit report"
     cmds:
-      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/cli/windows/generate-report.ps1
+      - cmd: python -u ./scripts/core/datadog_reporter.py --summary
         platforms: [windows]
-      - cmd: python3 ./scripts/core/datadog_reporter.py --summary
+      - cmd: python3 -u ./scripts/core/datadog_reporter.py --summary
         platforms: [linux, darwin]
 
   clean:
@@ -85,16 +93,31 @@ tasks:
         platforms: [linux, darwin]
 
   docker:up:
-    desc: "Start all services in Docker containers (Web + RAG + Ollama)"
+    desc: "Start services with default Python stack in Docker (Web + RAG + Ollama + Redis + Datadog on port 8000)"
     cmds:
-      - docker-compose up -d
+      - docker compose --profile python up -d
+
+  docker:python:
+    desc: "Start Python stack in Docker (Nginx Web + FastAPI RAG on port 8000)"
+    cmds:
+      - docker compose --profile python up -d
+
+  docker:php:
+    desc: "Start PHP stack in Docker (PHP Web + RAG on port 8000)"
+    cmds:
+      - docker compose --profile php up -d
+
+  docker:node:
+    desc: "Start Node.js / Express stack in Docker (Node Web + RAG on port 8000)"
+    cmds:
+      - docker compose --profile node up -d
 
   docker:down:
-    desc: "Stop all Docker containers"
+    desc: "Stop all Docker containers across all profiles"
     cmds:
-      - docker-compose down
+      - docker compose --profile python --profile php --profile node down
 
   docker:logs:
     desc: "Follow Docker container logs"
     cmds:
-      - docker-compose logs -f
+      - docker compose logs -f

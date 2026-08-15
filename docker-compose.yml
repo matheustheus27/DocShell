@@ -18,7 +18,7 @@ services:
       com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
       com.datadoghq.ad.logs: '[{"source": "ollama", "service": "docshell-ollama"}]'
     healthcheck:
-      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      test: [ "CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 30
@@ -43,7 +43,7 @@ services:
       com.datadoghq.tags.service: "docshell-ollama-pull"
       com.datadoghq.tags.env: "${DD_ENV:-production}"
       com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
-    entrypoint: ["/bin/sh", "-c"]
+    entrypoint: [ "/bin/sh", "-c" ]
     command:
       - |
         set -e
@@ -84,8 +84,90 @@ services:
       com.datadoghq.ad.logs: '[{"source": "redis", "service": "docshell-redis"}]'
     restart: unless-stopped
 
-  # 4. Backend RAG Service (FastAPI + Vector Embeddings + TranslateGemma + Redis + Datadog)
+  # 4. RabbitMQ Message Broker (Task Orchestrator & Dead Letter Queue)
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: docshell-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    labels:
+      com.datadoghq.tags.service: "docshell-rabbitmq"
+      com.datadoghq.tags.env: "${DD_ENV:-production}"
+      com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
+      com.datadoghq.ad.logs: '[{"source": "rabbitmq", "service": "docshell-rabbitmq"}]'
+    restart: unless-stopped
+
+  # 4. MongoDB Document Database (Persistent Storage for Docs, Translations & Telemetry)
+  mongo:
+    image: mongo:7.0
+    container_name: docshell-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: docshell
+    labels:
+      com.datadoghq.tags.service: "docshell-mongo"
+      com.datadoghq.tags.env: "${DD_ENV:-production}"
+      com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
+      com.datadoghq.ad.logs: '[{"source": "mongodb", "service": "docshell-mongo"}]'
+    restart: unless-stopped
+
+  # 5. Dedicated Translation Worker (RabbitMQ + 3 Retries + Deadline + Ollama)
+  worker:
+    profiles: ["python", "default"]
+    build:
+      context: .
+      dockerfile: scripts/docker/Dockerfile.worker
+    container_name: docshell-worker
+    environment:
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_DB_NAME: docshell
+      MONGO_URI: mongodb://mongo:27017/docshell
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      OLLAMA_TRANSLATE_MODEL: ${OLLAMA_TRANSLATE_MODEL:-translategemma}
+      DD_AGENT_HOST: datadog-agent
+      DD_SERVICE: "docshell-worker"
+      DD_ENV: "${DD_ENV:-production}"
+    volumes:
+      - ./dist/logs:/app/dist/logs
+      - ./publication/data:/app/publication/data
+      - ./scripts/core:/app/scripts/core:ro
+      - ./scripts/rag:/app/scripts/rag:ro
+      - ./scripts/worker:/app/scripts/worker:ro
+      - ./scripts/worker/worker.py:/app/worker.py:ro
+    labels:
+      com.datadoghq.tags.service: "docshell-worker"
+      com.datadoghq.tags.env: "${DD_ENV:-production}"
+      com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "docshell-worker"}]'
+    depends_on:
+      mongo:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+
+  # 6. Backend RAG Service (FastAPI + Vector Embeddings + TranslateGemma + Redis + Datadog)
   rag:
+    profiles: ["python", "default"]
     image: docshell-rag:local
     pull_policy: build
     build:
@@ -95,6 +177,12 @@ services:
     environment:
       SITE_ROOT: /site
       RAG_CACHE_DIR: /data/rag
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_DB_NAME: docshell
+      MONGO_URI: mongodb://mongo:27017/docshell
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
       REDIS_HOST: redis
       REDIS_PORT: 6379
       OLLAMA_HOST: http://ollama:11434
@@ -109,10 +197,15 @@ services:
       DD_VERSION: "${DD_VERSION:-1.0.0}"
       DD_LOGS_INJECTION: "true"
     volumes:
-      - ./dist/webpage:/site:ro
+      - ./dist/webpage/frontend:/site:ro
       - rag_data:/data/rag
       - ./dist/logs:/app/dist/logs
+      - ./publication/data:/app/publication/data
+      - ./dist/webpage/backend:/app/backend:ro
       - ./scripts/core:/app/scripts/core:ro
+      - ./scripts/rag:/app/scripts/rag:ro
+      - ./scripts/worker:/app/scripts/worker:ro
+      - ./scripts/rag/main.py:/app/main.py:ro
       - ./scripts/rag/app.py:/app/app.py:ro
     labels:
       com.datadoghq.tags.service: "docshell-rag"
@@ -120,14 +213,17 @@ services:
       com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
       com.datadoghq.ad.logs: '[{"source": "python", "service": "docshell-rag"}]'
     depends_on:
+      mongo:
+        condition: service_started
       redis:
         condition: service_started
       ollama:
         condition: service_started
     restart: unless-stopped
 
-  # 5. Web Server (Nginx + Reverse Proxy /api -> RAG)
+  # 5. Web Server - Python Stack (Nginx + Reverse Proxy /api & /ws -> RAG)
   web:
+    profiles: ["python", "default"]
     image: docshell-web:local
     pull_policy: build
     build:
@@ -137,7 +233,7 @@ services:
     ports:
       - "${SITE_PORT:-8000}:80"
     volumes:
-      - ./dist/webpage:/usr/share/nginx/html:ro
+      - ./dist/webpage/frontend:/usr/share/nginx/html:ro
     labels:
       com.datadoghq.tags.service: "docshell-web"
       com.datadoghq.tags.env: "${DD_ENV:-production}"
@@ -159,6 +255,7 @@ services:
       - DD_API_KEY=${DD_API_KEY:-00000000000000000000000000000000}
       - DD_SITE=${DD_SITE:-datadoghq.com}
       - DD_HOSTNAME=docshell-local
+      - DD_LOG_LEVEL=warn
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_LOGS_ENABLED=true
@@ -180,75 +277,68 @@ services:
       - ./dist/logs:/var/log/docshell:ro
     restart: unless-stopped
 
-  # 7. Alternative Python Standalone Server
-  web-python:
-    build:
-      context: .
-      dockerfile: scripts/docker/Dockerfile.python
-    container_name: docshell-web-python
-    ports:
-      - "8081:8000"
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - OLLAMA_HOST=http://ollama:11434
-      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.2}
-      - DD_AGENT_HOST=datadog-agent
-      - DD_SERVICE=docshell-web-python
-      - DD_ENV=${DD_ENV:-production}
-    volumes:
-      - ./dist/webpage:/site:ro
-      - ./scripts/core:/app/scripts/core:ro
-      - ./scripts/generators/python:/app/scripts/generators/python:ro
-    labels:
-      com.datadoghq.tags.service: "docshell-web-python"
-      com.datadoghq.tags.env: "${DD_ENV:-production}"
-      com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
-      com.datadoghq.ad.logs: '[{"source": "python", "service": "docshell-web-python"}]'
-    depends_on:
-      - redis
-      - ollama
-    restart: unless-stopped
-
-  # 8. Alternative PHP Standalone Server
+  # 7. PHP Runtime Server Stack
   web-php:
+    profiles: ["php"]
     build:
       context: .
       dockerfile: scripts/docker/Dockerfile.php
     container_name: docshell-web-php
     ports:
-      - "8001:8000"
+      - "${SITE_PORT:-8000}:8000"
     environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OLLAMA_HOST=http://ollama:11434
       - DD_AGENT_HOST=datadog-agent
       - DD_SERVICE=docshell-web-php
       - DD_ENV=${DD_ENV:-production}
+    volumes:
+      - ./dist/webpage/frontend:/site:ro
+      - ./scripts/core:/app/scripts/core:ro
+      - ./scripts/generators/php:/app/scripts/generators/php:ro
     labels:
       com.datadoghq.tags.service: "docshell-web-php"
       com.datadoghq.tags.env: "${DD_ENV:-production}"
       com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
       com.datadoghq.ad.logs: '[{"source": "php", "service": "docshell-web-php"}]'
+    depends_on:
+      - redis
+      - ollama
     restart: unless-stopped
 
-  # 9. Alternative Node.js Standalone Server
+  # 8. Node.js / Express Runtime Server Stack
   web-node:
+    profiles: ["node", "javascript"]
     build:
       context: .
       dockerfile: scripts/docker/Dockerfile.node
     container_name: docshell-web-node
     ports:
-      - "8002:8000"
+      - "${SITE_PORT:-8000}:8000"
     environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OLLAMA_HOST=http://ollama:11434
       - DD_AGENT_HOST=datadog-agent
       - DD_SERVICE=docshell-web-node
       - DD_ENV=${DD_ENV:-production}
+    volumes:
+      - ./dist/webpage/frontend:/site:ro
+      - ./scripts/generators/javascript:/app:ro
     labels:
       com.datadoghq.tags.service: "docshell-web-node"
       com.datadoghq.tags.env: "${DD_ENV:-production}"
       com.datadoghq.tags.version: "${DD_VERSION:-1.0.0}"
       com.datadoghq.ad.logs: '[{"source": "nodejs", "service": "docshell-web-node"}]'
+    depends_on:
+      - redis
+      - ollama
     restart: unless-stopped
 
 volumes:
   ollama_data:
   rag_data:
   redis_data:
+  rabbitmq_data:
+  mongo_data:

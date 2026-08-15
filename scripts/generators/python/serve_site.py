@@ -120,19 +120,23 @@ class DocShellHTTPHandler(SimpleHTTPRequestHandler):
 
 def run_server(port: int = 8000):
     dist_web = ROOT_DIR / "dist" / "webpage"
-    if not (dist_web / "index.html").exists():
-        print("⚠️ dist/webpage/index.html não encontrado. Compilando site...")
+    dist_frontend = dist_web / "frontend"
+    target_dir = dist_frontend if (dist_frontend / "index.html").exists() else dist_web
+
+    if not (target_dir / "index.html").exists():
+        print("⚠️ dist/webpage/frontend/index.html não encontrado. Compilando site...")
         from scripts.generators.python.build_site import build_python_site
         build_python_site()
+        target_dir = dist_frontend if (dist_frontend / "index.html").exists() else dist_web
 
     print("=================================================================")
     print(f"🚀 DocShell Python Server & RAG Engine")
     print(f"   URL: http://127.0.0.1:{port}")
-    print(f"   Doc Root: {dist_web}")
+    print(f"   Doc Root: {target_dir}")
     print("   Pressione Ctrl+C para encerrar.")
     print("=================================================================")
 
-    handler = lambda *args, **kwargs: DocShellHTTPHandler(*args, directory=str(dist_web), **kwargs)
+    handler = lambda *args, **kwargs: DocShellHTTPHandler(*args, directory=str(target_dir), **kwargs)
     server = ThreadingHTTPServer(("0.0.0.0", port), handler)
     try:
         server.serve_forever()

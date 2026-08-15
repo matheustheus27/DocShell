@@ -118,7 +118,8 @@ function Convert-MdContent([string]$md) {
             if (-not $inCode) {
                 $inCode = $true
                 $res.Add('<pre><code>')
-            } else {
+            }
+            else {
                 $inCode = $false
                 $res.Add('</code></pre>')
             }
@@ -182,7 +183,8 @@ foreach ($file in $mdFiles) {
     
     $section = if ($parts.Count -gt 1) {
         ([regex]::Replace($parts[0], '^\d+[-_.]*', '') -replace '[-_]', ' ')
-    } else {
+    }
+    else {
         "General"
     }
     $section = (Get-Culture).TextInfo.ToTitleCase($section)
@@ -201,7 +203,8 @@ foreach ($file in $mdFiles) {
     if ([string]::IsNullOrWhiteSpace($title)) {
         if ($body -match '(?m)^#\s+(.+)$') {
             $title = $Matches[1].Trim()
-        } else {
+        }
+        else {
             $title = [System.IO.Path]::GetFileNameWithoutExtension($file.Name) -replace '^\d+[-_.]*', '' -replace '[-_]', ' '
         }
     }
@@ -209,7 +212,7 @@ foreach ($file in $mdFiles) {
     $slug = Get-Slug "$section-$title"
 
     if ($section -ne $currentSec) {
-        if ($currentSec -ne $null) { $sidebarHtml.Add('</ul>') }
+        if ($null -ne $currentSec) { $sidebarHtml.Add('</ul>') }
         $currentSec = $section
         $sidebarHtml.Add("<div class=""sidebar-section-title"">$section</div>")
         $sidebarHtml.Add('<ul class="sidebar-nav">')
@@ -233,7 +236,7 @@ foreach ($file in $mdFiles) {
     $cardsHtml.Add($cardItem)
 }
 
-if ($currentSec -ne $null) {
+if ( $null -ne $currentSec) {
     $sidebarHtml.Add('</ul>')
 }
 
@@ -264,10 +267,10 @@ foreach ($file in $mdFiles) {
     $htmlBody = Convert-MdContent $body
 
     $baseDocs += [ordered]@{
-        slug = $slug
-        section = $section
-        title = $title
-        body = $body
+        slug      = $slug
+        section   = $section
+        title     = $title
+        body      = $body
         html_body = $htmlBody
     }
 }

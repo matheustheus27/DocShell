@@ -77,8 +77,8 @@ def get_logger(name: str = "docshell") -> logging.Logger:
     return logger
 
 
-def log_event(event_name: str, level: str = "INFO", details: Optional[Dict[str, Any]] = None, duration_ms: Optional[float] = None):
-    """Logs a structured event directly into Datadog telemetry stream."""
+def log_event(event_name: str, level: str = "INFO", details: Optional[Dict[str, Any]] = None, duration_ms: Optional[float] = None, status_code: Optional[int] = None):
+    """Logs a structured event into both Datadog telemetry stream and SQLite audit logs."""
     entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "service": DD_SERVICE,
@@ -87,12 +87,26 @@ def log_event(event_name: str, level: str = "INFO", details: Optional[Dict[str, 
         "level": level.upper(),
         "event": event_name,
         "duration_ms": duration_ms,
+        "status_code": status_code,
         "details": details or {}
     }
     try:
         LOGS_DIR.mkdir(parents=True, exist_ok=True)
         with open(TELEMETRY_FILE, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
+    try:
+        from scripts.core.database import db
+        db.log_audit_event(
+            service=DD_SERVICE,
+            event=event_name,
+            level=level.upper(),
+            duration_ms=duration_ms,
+            status_code=status_code,
+            details=details
+        )
     except Exception:
         pass
 

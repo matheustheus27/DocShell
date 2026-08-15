@@ -11,6 +11,8 @@ COPY scripts/rag/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY scripts/core /app/scripts/core
+COPY scripts/rag /app/scripts/rag
+COPY scripts/rag/main.py /app/main.py
 COPY scripts/rag/app.py /app/app.py
 
 ENV PYTHONPATH=/app \
@@ -28,4 +30,4 @@ VOLUME ["/data/rag"]
 HEALTHCHECK --interval=10s --timeout=5s --retries=12 --start-period=20s \
   CMD curl -fsS http://127.0.0.1:8080/healthz || exit 1
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

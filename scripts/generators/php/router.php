@@ -2,8 +2,8 @@
 /**
  * DocShell PHP Built-in Web Server Router
  */
-$uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-$distDir = dirname(__DIR__, 3) . '/dist/webpage';
+$baseDist = dirname(__DIR__, 3) . '/dist/webpage';
+$distDir = is_dir($baseDist . '/frontend') ? $baseDist . '/frontend' : $baseDist;
 $file = $distDir . $uri;
 
 // Endpoints de API RAG

@@ -9,15 +9,15 @@ A pasta `models/` é o local onde ficam armazenadas as definições visuais do D
 
 ## Estrutura de um Modelo
 
-```
-models/meu-tema/
-├── model.json        # Metadados e variáveis de cores do tema
-├── web/
-│   ├── style.css     # Estilos CSS específicos do site
-│   └── script.js     # Comportamentos e animações JS
-└── pdf/
-    ├── header.tex    # Cabeçalho LaTeX com paleta de cores e tipografia
-    └── style.css     # Estilos alternativos para geradores HTML-to-PDF
+```text
+🎨 models/meu-tema/
+├── ⚙️ model.json       # Metadados e variáveis de cores do tema
+├── 🌐 web/
+│   ├── 🎨 style.css     # Estilos CSS específicos do site
+│   └── ⚡ script.js    # Comportamentos e animações JS
+└── 📕 pdf/
+    ├── 📑 header.tex    # Cabeçalho LaTeX com paleta de cores e tipografia
+    └── 🎨 style.css     # Estilos alternativos para geradores HTML-to-PDF
 ```
 
 ## Modelos Disponíveis Nativamente

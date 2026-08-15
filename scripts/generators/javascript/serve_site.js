@@ -8,8 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
-const rootDir = path.resolve(__dirname, '../../../');
-const distWeb = path.join(rootDir, 'dist', 'webpage');
+const baseWeb = path.join(rootDir, 'dist', 'webpage');
+const distWeb = fs.existsSync(path.join(baseWeb, 'frontend')) ? path.join(baseWeb, 'frontend') : baseWeb;
 let port = 8000;
 
 process.argv.forEach((arg, i) => {

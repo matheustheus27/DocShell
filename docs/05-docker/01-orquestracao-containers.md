@@ -7,33 +7,43 @@ description: "Execução simplificada em containers Docker"
 
 Todas as versões do DocShell (Python, PHP, JavaScript e serviço de RAG) possuem imagens Docker otimizadas.
 
-## Subindo o Ambiente Completo
+## Subindo o Ambiente por Linguagem (Compose Profiles)
 
-Para iniciar o servidor web juntamente com o serviço RAG e Ollama:
-
-```bash
-docker-compose up -d
-```
-
-## Serviços Disponíveis
-
-| Serviço | Porta | Descrição |
-|---|---|---|
-| `web-python` | `8000` | Site documentação em Python com API RAG integrada |
-| `web-php` | `8001` | Site documentação em PHP com busca e chat |
-| `web-node` | `8002` | Site documentação em Node.js com Express |
-| `rag-service` | `8080` | Microsserviço Python FastAPI de embeddings e busca vetorial |
-| `ollama` | `11434` | Instância local do Ollama para inferência de LLMs |
-
-## Comandos Docker via Taskfile
+O DocShell suporta **Docker Compose Profiles** inteligentes, permitindo subir apenas os serviços da linguagem desejada em porta unificada (`8000`):
 
 ```bash
-# Subir containers em background
-task docker:up
+# Iniciar stack Python (Nginx + FastAPI + Worker + RabbitMQ + Redis + Ollama + Datadog)
+task docker:python
 
-# Ver logs
-task docker:logs
+# Iniciar stack PHP (PHP-FPM/Nginx + Redis + Ollama + Datadog)
+task docker:php
 
-# Parar containers
+# Iniciar stack Node.js (Express + Redis + Ollama + Datadog)
+task docker:node
+
+# Parar todos os contêineres
 task docker:down
 ```
+
+## Arquitetura de Contêineres
+
+| Serviço | Porta Exposta | Stack / Imagem | Função |
+| :--- | :---: | :--- | :--- |
+| **`docshell-web`** | `8000` | Nginx Alpine / PHP / Node | Servidor web frontend e proxy reverso |
+| **`docshell-rag`** | `8080` | FastAPI Python 3.12 | Gateway da API, streaming WebSocket e RAG |
+| **`docshell-worker`** | - | Python 3.12 Worker | Processador de tradução assíncrona TranslateGemma |
+| **`docshell-mongo`** | `27017` | MongoDB 7.0 | Banco de dados orientado a documentos e logs de auditoria |
+| **`docshell-rabbitmq`** | `5672` / `15672` | RabbitMQ Management | Fila AMQP e orquestração de tarefas com DLQ |
+| **`docshell-redis`** | `6379` | Redis 7 Alpine | Cache em memória para traduções e embeddings |
+| **`docshell-ollama`** | `11434` | Ollama | Inferência local dos modelos LLaMA 3.2 e TranslateGemma |
+| **`docshell-datadog`** | `8125` / `8126` | Datadog Agent 7 | Coleta de telemetria, APM, traces e DogStatsD |
+
+## Relatório de Telemetria e Auditoria
+
+Para auditar a saúde de todos os contêineres e métricas de desempenho:
+
+```bash
+task report
+```
+
+O comando exporta um relatório consolidado em `dist/reports/datadog_report.md`.

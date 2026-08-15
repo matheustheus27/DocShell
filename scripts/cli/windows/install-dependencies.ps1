@@ -9,7 +9,7 @@ Write-Host "=================================================================" -
 Write-Host "[DocShell] Automated Dependency Installer (Windows)" -ForegroundColor Cyan
 Write-Host "=================================================================" -ForegroundColor Cyan
 
-function Refresh-SessionPath {
+function Update-SessionPath {
     $machine = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
     $user = [System.Environment]::GetEnvironmentVariable("Path", "User")
     $env:Path = @($machine, $user, $env:Path) -join ";"
@@ -23,12 +23,25 @@ if (-not $wingetCmd) {
     exit 1
 }
 
+function Resolve-PhpWingetId {
+    $phpVersions = @("PHP.PHP.8.3", "PHP.PHP.8.4", "PHP.PHP.8.2", "PHP.PHP.8.1")
+    foreach ($cand in $phpVersions) {
+        $check = & winget search --id $cand --exact 2>$null
+        if ($LASTEXITCODE -eq 0 -and $check -match $cand) {
+            return $cand
+        }
+    }
+    return "PHP.PHP.8.3"
+}
+
+$phpPackageId = Resolve-PhpWingetId
+
 $packages = @(
     @{ Name = "Python 3.12"; Id = "Python.Python.3.12"; Cmd = "python" },
     @{ Name = "Pandoc (PDF Engine)"; Id = "JohnMacFarlane.Pandoc"; Cmd = "pandoc" },
     @{ Name = "MiKTeX (XeLaTeX / PDF)"; Id = "MiKTeX.MiKTeX"; Cmd = "xelatex" },
     @{ Name = "Node.js (LTS)"; Id = "OpenJS.NodeJS"; Cmd = "node" },
-    @{ Name = "PHP CLI"; Id = "PHP.PHP"; Cmd = "php" },
+    @{ Name = "PHP CLI"; Id = $phpPackageId; Cmd = "php" },
     @{ Name = "Taskfile CLI"; Id = "Task.Task"; Cmd = "task" },
     @{ Name = "Git"; Id = "Git.Git"; Cmd = "git" },
     @{ Name = "Ollama (Local AI)"; Id = "Ollama.Ollama"; Cmd = "ollama" }
@@ -37,18 +50,20 @@ $packages = @(
 Write-Host "`n[1/2] Checking system tools...`n" -ForegroundColor Yellow
 
 foreach ($pkg in $packages) {
-    Refresh-SessionPath
+    Update-SessionPath
     $exists = $null -ne (Get-Command $pkg.Cmd -ErrorAction SilentlyContinue)
     
     if ($exists) {
         Write-Host "  [OK] $($pkg.Name) is already installed." -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "  [+] Installing $($pkg.Name) (ID: $($pkg.Id))..." -ForegroundColor Cyan
         try {
             & winget install --id $pkg.Id --exact --accept-source-agreements --accept-package-agreements --silent
-            Refresh-SessionPath
+            Update-SessionPath
             Write-Host "  [OK] $($pkg.Name) installation completed." -ForegroundColor Green
-        } catch {
+        }
+        catch {
             Write-Host "  [WARN] Failed to auto-install $($pkg.Name): $($_.Exception.Message)" -ForegroundColor Yellow
         }
     }
@@ -56,7 +71,7 @@ foreach ($pkg in $packages) {
 
 # 2. Install Python packages from requirements.txt
 Write-Host "`n[2/3] Installing Python libraries (pip)...`n" -ForegroundColor Yellow
-Refresh-SessionPath
+Update-SessionPath
 $python = Resolve-PythonCommand
 
 if (($null -ne (Get-Command $python -ErrorAction SilentlyContinue)) -or (Test-Path -LiteralPath $python)) {
@@ -67,13 +82,14 @@ if (($null -ne (Get-Command $python -ErrorAction SilentlyContinue)) -or (Test-Pa
         & $python -m pip install -r $reqFile
         Write-Host "  [OK] Python dependencies installed successfully!" -ForegroundColor Green
     }
-} else {
+}
+else {
     Write-Host "[WARN] Python not detected in current session. Restart terminal to refresh environment variables." -ForegroundColor Yellow
 }
 
 # 3. Optional Node CLI tools (mermaid-filter for PDF diagrams)
 Write-Host "`n[3/3] Checking Node.js tools (mermaid-filter)...`n" -ForegroundColor Yellow
-Refresh-SessionPath
+Update-SessionPath
 $npmCmd = Get-Command "npm" -ErrorAction SilentlyContinue
 if ($npmCmd) {
     $mfExists = Get-Command "mermaid-filter" -ErrorAction SilentlyContinue
@@ -82,10 +98,12 @@ if ($npmCmd) {
         try {
             & npm install -g mermaid-filter --silent
             Write-Host "  [OK] mermaid-filter installed successfully." -ForegroundColor Green
-        } catch {
+        }
+        catch {
             Write-Host "  [WARN] Could not auto-install mermaid-filter: $($_.Exception.Message)" -ForegroundColor Yellow
         }
-    } else {
+    }
+    else {
         Write-Host "  [OK] mermaid-filter is already installed." -ForegroundColor Green
     }
 }

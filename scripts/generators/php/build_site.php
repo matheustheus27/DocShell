@@ -66,17 +66,14 @@ if (file_exists($modelDir . '/web/script.js')) {
     copy($rootDir . '/models/glassmorphic/web/script.js', $distWeb . '/assets/script.js');
 }
 
-// 3. Executa o parser core para gerar os dados
+// 3. Executa o build principal para gerar frontend, backend e worker
 $pythonCmd = (DIRECTORY_SEPARATOR === '\\') ? 'python' : 'python3';
-exec("{$pythonCmd} " . escapeshellarg($rootDir . '/scripts/core/doc_parser.py'), $output, $retCode);
+passthru("{$pythonCmd} " . escapeshellarg($rootDir . '/scripts/generators/python/build_site.py') . " -m " . escapeshellarg($modelName), $retCode);
 
-// 4. Copia index e search_index gerados
-if (file_exists($pubDir . '/search_index.json')) {
-    copy($pubDir . '/search_index.json', $distWeb . '/search_index.json');
-}
-
-// 5. Gera a versão PHP com suporte a servidor
-$phpIndexContent = <<<'PHP'
+// 4. Gera o index.php em dist/webpage/frontend/
+$frontendDir = $distWeb . '/frontend';
+if (is_dir($frontendDir)) {
+    $phpIndexContent = <<<'PHP'
 <?php
 // DocShell PHP Dynamic & Static Viewer
 $distDir = __DIR__;
@@ -98,8 +95,7 @@ if ($_SERVER['REQUEST_URI'] === '/api/chat' && $_SERVER['REQUEST_METHOD'] === 'P
     $input = json_decode(file_get_contents('php://input'), true);
     $msg = $input['message'] ?? '';
     
-    // Busca simples no search_index.json
-    $searchIndex = json_decode(file_get_contents($distDir . '/search_index.json'), true) ?: [];
+    $searchIndex = json_decode(file_get_contents($distDir . '/data/search_index.json'), true) ?: [];
     $found = [];
     $terms = explode(' ', strtolower($msg));
     
@@ -128,9 +124,9 @@ if ($_SERVER['REQUEST_URI'] === '/api/chat' && $_SERVER['REQUEST_METHOD'] === 'P
     exit;
 }
 
-// Serve o HTML gerado
 readfile($distDir . '/index.html');
 PHP;
 
-file_put_contents($distWeb . '/index.php', $phpIndexContent);
-echo "✅ Site compilado com sucesso com runtime PHP em {$distWeb}/index.php\n";
+    file_put_contents($frontendDir . '/index.php', $phpIndexContent);
+    echo "✅ PHP runtime integrado em {$frontendDir}/index.php\n";
+}

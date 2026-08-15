@@ -26,8 +26,17 @@ $LogsDir = Join-Path $RootDir "dist\logs"
 $TelemetryFile = Join-Path $LogsDir "datadog_telemetry.jsonl"
 $ReportsDir = Join-Path $RootDir "dist\reports"
 
-if (-not (Test-Path $ReportsDir)) {
-    New-Item -ItemType Directory -Path $ReportsDir -Force | Out-Null
+$PythonBin = Get-Command python -ErrorAction SilentlyContinue
+if ($PythonBin) {
+    $ReporterScript = Join-Path $RootDir "scripts\core\datadog_reporter.py"
+    if (Test-Path $ReporterScript) {
+        if ($Output) {
+            & $PythonBin.Source $ReporterScript --summary --export $Format --output $Output
+        } else {
+            & $PythonBin.Source $ReporterScript --summary --export $Format
+        }
+        exit 0
+    }
 }
 
 $events = @()
