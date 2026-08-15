@@ -1,0 +1,13 @@
+[tool.pyrefly]
+search_paths = [
+    ".",
+    "scripts",
+    "scripts/core",
+    "scripts/rag",
+    "scripts/worker",
+    "scripts/generators/python"
+]
+project_excludes = [
+    "**/__pyrefly_virtual__/**",
+    "**/dist/**"
+]

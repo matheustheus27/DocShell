@@ -29,6 +29,7 @@ if str(ROOT_DIR) not in sys.path:
 from scripts.core.config_loader import load_publication_config, load_theme_model
 from scripts.core.doc_parser import scan_docs_directory, build_search_and_rag_index, slugify, parse_markdown_to_html, parse_inline
 from scripts.core.translator import SUPPORTED_LOCALES, get_ui_string, normalize_locale, translate_document_content, translate_section
+from scripts.core.database import db
 
 MERMAID_THEMES = {
     "glassmorphic": {

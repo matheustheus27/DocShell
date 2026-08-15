@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
+        ".",
         "./scripts",
         "./scripts/core",
         "./scripts/rag",
@@ -7,10 +8,14 @@
         "./scripts/generators/python"
     ],
     "python.autoComplete.extraPaths": [
+        ".",
         "./scripts",
         "./scripts/core",
         "./scripts/rag",
         "./scripts/worker",
         "./scripts/generators/python"
+    ],
+    "python.analysis.ignore": [
+        "**/__pyrefly_virtual__/**"
     ]
 }
