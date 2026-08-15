@@ -265,6 +265,7 @@ body {
   box-shadow: var(--shadow-main);
   margin-bottom: 2.5rem;
   animation: fadeIn 0.4s ease-out;
+  scroll-margin-top: calc(var(--header-height) + 16px);
 }
 
 @keyframes fadeIn {

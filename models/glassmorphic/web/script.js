@@ -600,7 +600,8 @@ function initTocSpy() {
       const sRect = sidebar.getBoundingClientRect();
       const lRect = activeLink.getBoundingClientRect();
       if (lRect.top < sRect.top + 30 || lRect.bottom > sRect.bottom - 30) {
-        activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        const offset = lRect.top - sRect.top - (sidebar.clientHeight / 2) + (activeLink.clientHeight / 2);
+        sidebar.scrollBy({ top: offset, behavior: 'smooth' });
       }
     }
   }
@@ -642,22 +643,24 @@ function initTocSpy() {
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
     const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
 
+    const visibleCards = cards.filter(card => !card.hidden && card.style.display !== 'none');
+    if (!visibleCards.length) return null;
+
     // 1. Top of document
-    if (scrollY <= 40 && cards.length > 0) {
-      return cards[0].id;
+    if (scrollY <= 40) {
+      return visibleCards[0].id;
     }
 
     // 2. Bottom of document (tolerant 50px boundary)
-    if ((scrollY + windowHeight) >= (scrollHeight - 50) && cards.length > 0) {
-      return cards[cards.length - 1].id;
+    if ((scrollY + windowHeight) >= (scrollHeight - 50)) {
+      return visibleCards[visibleCards.length - 1].id;
     }
 
     // 3. Reading focus line (25% from top of visible content area)
     const readingLine = HEADER_HEIGHT + (windowHeight - HEADER_HEIGHT) * 0.25;
 
-    let activeCard = cards[0];
-    for (const card of cards) {
-      if (card.hidden || card.style.display === 'none') continue;
+    let activeCard = visibleCards[0];
+    for (const card of visibleCards) {
       const rect = card.getBoundingClientRect();
       if (rect.top <= readingLine) {
         activeCard = card;
@@ -666,7 +669,7 @@ function initTocSpy() {
       }
     }
 
-    return activeCard ? activeCard.id : (cards[0] ? cards[0].id : null);
+    return activeCard ? activeCard.id : (visibleCards[0] ? visibleCards[0].id : null);
   }
 
   function highlightActive() {
@@ -702,13 +705,33 @@ window.navigateToSection = function (slug) {
   if (!slug) return;
   const target = document.getElementById(slug);
   if (target) {
-    const headerHeight = 80;
+    const headerHeight = 70;
     const elementPosition = target.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+    const offsetPosition = elementPosition + (window.scrollY || window.pageYOffset || document.documentElement.scrollTop) - headerHeight - 10;
     window.scrollTo({
-      top: offsetPosition,
+      top: Math.max(0, offsetPosition),
       behavior: 'smooth'
     });
+
+    const navLink = document.querySelector(`.sidebar-nav-link[href="#${slug}"]`);
+    if (navLink) {
+      document.querySelectorAll('.sidebar-nav-link').forEach(l => {
+        const isActive = (l === navLink);
+        l.classList.toggle('active', isActive);
+        if (isActive) l.setAttribute('aria-current', 'location');
+        else l.removeAttribute('aria-current');
+      });
+      const sidebar = document.querySelector('.doc-sidebar');
+      if (sidebar) {
+        const sRect = sidebar.getBoundingClientRect();
+        const lRect = navLink.getBoundingClientRect();
+        if (lRect.top < sRect.top + 30 || lRect.bottom > sRect.bottom - 30) {
+          const offset = lRect.top - sRect.top - (sidebar.clientHeight / 2) + (navLink.clientHeight / 2);
+          sidebar.scrollBy({ top: offset, behavior: 'smooth' });
+        }
+      }
+    }
+
     target.classList.add('highlight-card');
     setTimeout(() => {
       target.classList.remove('highlight-card');
@@ -801,13 +824,19 @@ function initSearch() {
     });
 
     navItems.forEach(item => {
-      const text = item.innerText.toLowerCase();
+      const link = item.querySelector('.sidebar-nav-link');
+      const href = link ? (link.getAttribute('href') || '') : '';
+      const text = (item.innerText + ' ' + href).toLowerCase();
       if (!term || text.includes(term)) {
         item.style.display = 'block';
       } else {
         item.style.display = 'none';
       }
     });
+
+    if (typeof window.updateActiveTocSpy === 'function') {
+      window.updateActiveTocSpy();
+    }
   });
 
   document.addEventListener('keydown', (e) => {
@@ -815,29 +844,6 @@ function initSearch() {
       e.preventDefault();
       searchInput.focus();
     }
-  });
-}
-
-// Scroll spy for TOC
-function initTocSpy() {
-  const links = document.querySelectorAll('.sidebar-nav-link');
-  const sections = document.querySelectorAll('section[id], h1[id], h2[id]');
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-      const top = section.offsetTop - 120;
-      if (window.pageYOffset >= top) {
-        current = section.getAttribute('id');
-      }
-    });
-
-    links.forEach(link => {
-      link.classList.remove('active');
-      if (current && link.getAttribute('href').includes(current)) {
-        link.classList.add('active');
-      }
-    });
   });
 }
 
