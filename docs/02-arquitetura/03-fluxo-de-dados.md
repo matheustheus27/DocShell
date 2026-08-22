@@ -1,11 +1,16 @@
 ---
 title: "Fluxo de Execução e Dados"
-description: "Como os dados transitam desde a escrita até a distribuição final"
+description: "Como os dados transitam desde a escrita até a distribuição final no GlassHub DocShell"
 ---
 
 # Fluxo de Execução e Dados
 
-O pipeline do DocShell segue um fluxo determinístico dividido em etapas:
+<p>
+  <img src="https://glass-hub-engine.vercel.app/api/badge?label=Pipeline&text=Deterministic+Data+Flow&theme=glass-dark&icon=sparkles" alt="Pipeline" />
+  <img src="https://glass-hub-engine.vercel.app/api/badge?label=Engine&text=GlassHub+DocShell&theme=glass-dark&icon=glasshub" alt="Engine" />
+</p>
+
+O pipeline do **GlassHub DocShell** segue um fluxo determinístico dividido em etapas:
 
 ## 1. Descoberta e Parsing (Discovery Phase)
 O parser examina a raiz `docs/`, lê a numeração das pastas (ex: `01-`, `02-`) e arquivos, remove prefixos numéricos para apresentação amigável e extrai metadados do cabeçalho YAML.
@@ -18,4 +23,4 @@ Os tokens do modelo selecionado (ex: `glassmorphic`, `corporate`) são injetados
 
 ## 4. Compilação e Distribuição (Build Phase)
 - **PDF**: Compilado para `dist/pdf/{basename}-{release}.pdf`.
-- **Webpage**: Compilado para `dist/webpage/` com ativos, imagens, índice de busca e widget de IA.
+- **Webpage**: Compilado para `dist/webpage/` com ativos estáticos, imagens, índice de busca e widget de IA com streaming WebSocket.

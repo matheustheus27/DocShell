@@ -1,7 +1,7 @@
 {
   "id": "corporate",
   "name": "Corporate Theme",
-  "description": "Design formal e executivo em tons azul marinho e ardósia com foco em relatórios corporativos.",
+  "description": "Formal and executive design in navy blue and slate tones tailored for corporate reporting and governance.",
   "tokens": {
     "colors": {
       "primary": "#1e3a8a",

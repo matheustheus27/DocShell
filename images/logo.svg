@@ -1,15 +1,85 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60">
+<svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  width="300" 
+  height="300" 
+  viewBox="0 0 300 300"
+  fill="none"
+>
   <defs>
-    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6366f1"/>
-      <stop offset="100%" stop-color="#06b6d4"/>
+    <!-- Neon Cyan Cobalt Border Gradient -->
+    <linearGradient id="logoBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
     </linearGradient>
+
+    <!-- Cosmic Core Gradient -->
+    <radialGradient id="cosmicCore" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.35" />
+      <stop offset="60%" stop-color="#1D4ED8" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9" />
+    </radialGradient>
+
+    <!-- Glass Reflection Shine -->
+    <linearGradient id="logoGlassShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3" />
+      <stop offset="40%" stop-color="#FFFFFF" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="logoGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
   </defs>
-  <!-- Shell Icon -->
-  <rect x="5" y="10" width="40" height="40" rx="10" fill="url(#logoGrad)"/>
-  <path d="M 16 23 L 24 30 L 16 37" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="27" y1="37" x2="35" y2="37" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-  
-  <!-- Text -->
-  <text x="56" y="38" fill="#0f172a" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="800" letter-spacing="-0.5">Doc<tspan fill="#6366f1">Shell</tspan></text>
+
+  <style>
+    .logo-window { fill: url(#cosmicCore); stroke: url(#logoBorderGrad); stroke-width: 2.5; rx: 24; }
+    .logo-shine { fill: url(#logoGlassShine); rx: 22; }
+    .logo-text { font-family: 'Outfit', 'Inter', system-ui, sans-serif; font-weight: 800; fill: #F8FAFC; letter-spacing: 1px; }
+    .logo-subtext { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; fill: #06B6D4; letter-spacing: 3px; }
+    
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.15; }
+    }
+    .cursor-blink { animation: cursorBlink 1.1s ease-in-out infinite; }
+  </style>
+
+  <!-- Glass Window Background -->
+  <rect x="20" y="20" width="260" height="260" rx="24" class="logo-window" filter="url(#logoGlow)" />
+
+  <!-- Top Window Bar Controls -->
+  <circle cx="50" cy="45" r="5" fill="#EF4444" opacity="0.8" />
+  <circle cx="66" cy="45" r="5" fill="#F59E0B" opacity="0.8" />
+  <circle cx="82" cy="45" r="5" fill="#10B981" opacity="0.8" />
+  <line x1="105" y1="45" x2="250" y2="45" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 4" />
+
+  <!-- Terminal Central Artwork -->
+  <!-- Outer CLI Terminal Frame -->
+  <rect x="55" y="60" width="190" height="135" rx="12" fill="rgba(15, 23, 42, 0.95)" stroke="url(#logoBorderGrad)" stroke-width="2" filter="url(#logoGlow)" />
+  <!-- Window Title Bar Line & Status LEDs -->
+  <line x1="55" y1="76" x2="245" y2="76" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" />
+  <circle cx="75" cy="68" r="3.5" fill="#EF4444" opacity="0.85" />
+  <circle cx="87" cy="68" r="3.5" fill="#F59E0B" opacity="0.85" />
+  <circle cx="99" cy="68" r="3.5" fill="#10B981" opacity="0.85" />
+  <text x="230" y="72" text-anchor="end" font-family="monospace" font-size="9" font-weight="700" fill="#06B6D4" opacity="0.8">docshell_cli</text>
+  <!-- Prompt Chevron '>' -->
+  <path d="M75 100 L95 118 L75 136" stroke="#06B6D4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#logoGlow)" />
+  <!-- Underline Cursor '_' -->
+  <line x1="110" y1="136" x2="145" y2="136" stroke="#22D3EE" stroke-width="4" stroke-linecap="round" class="cursor-blink" />
+  <!-- Ambient Terminal Code Output Lines -->
+  <line x1="75" y1="155" x2="175" y2="155" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" opacity="0.4" />
+  <line x1="75" y1="167" x2="135" y2="167" stroke="#06B6D4" stroke-width="2" stroke-linecap="round" opacity="0.3" />
+
+  <!-- Glass Specular Reflection Highlight -->
+  <path d="M20 44 C20 30 30 20 44 20 H256 C270 20 280 30 280 44 V120 L20 180 Z" class="logo-shine" />
+
+  <!-- Branding Text Below -->
+  <text x="150" y="238" text-anchor="middle" class="logo-text" font-size="20">GLASSHUB</text>
+  <text x="150" y="258" text-anchor="middle" class="logo-subtext" font-size="11">DOCSHELL</text>
 </svg>

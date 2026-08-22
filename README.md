@@ -1,4 +1,15 @@
-# 🐚 DocShell - Intelligent Documentation Framework (PDF & Web)
+<div align="center">
+  <img src="https://glass-hub-engine.vercel.app/api/logo?project=docshell&animated=true&width=220&height=220" alt="GlassHub DocShell Animated Logo" />
+  <h1>🐚 GlassHub DocShell</h1>
+  <p><em>Intelligent Documentation Engine & Architectural Framework for the GlassHub Ecosystem</em></p>
+
+  <p>
+    <a href="https://github.com/matheustheus27/GlassHubDocShell"><img src="https://glass-hub-engine.vercel.app/api/badge?label=Ecosystem&text=GlassHub&theme=glass-dark&icon=glasshub" alt="GlassHub Ecosystem" /></a>
+    <img src="https://glass-hub-engine.vercel.app/api/badge?label=Status&text=v1.0+Active&theme=glass-dark&icon=sparkles" alt="Status" />
+    <img src="https://glass-hub-engine.vercel.app/api/badge?label=License&text=Non-Commercial&theme=glass-dark" alt="License" />
+    <img src="https://glass-hub-engine.vercel.app/api/badge?label=Architecture&text=Atomic+Design&theme=glass-dark&icon=gear" alt="Architecture" />
+  </p>
+</div>
 
 > **Unified, modern, decoupled platform for generating technical documentation in versioned PDF and interactive Websites across multiple runtimes (Python, PHP, JavaScript) with semantic search, RAG/AI assistant, Docker support, and customizable visual themes.**
 
@@ -25,9 +36,11 @@
 
 ## 🔭 Overview & Architecture
 
-**DocShell** transforms Markdown files organized in the `docs/` folder into publication-grade deliverables:
+**GlassHub DocShell** transforms Markdown files organized in the `docs/` folder into publication-grade deliverables:
 1. **Executive & Versioned PDF Document** (`dist/pdf/{basename}-{release}.pdf`) using Pandoc and XeLaTeX.
 2. **Modern Interactive Website** (`dist/webpage/`) with real-time search filtering, dynamic sidebar, responsive typography, and an **embedded AI Assistant Chatbot powered by RAG (Ollama / Llama 3.2)**.
+
+![GlassHub DocShell Architecture Table](https://glass-hub-engine.vercel.app/api/table?title=GlassHub+DocShell+Layer+Architecture&columns=Layer,Technology,Responsibility,Status&rows=Frontend,Glassmorphic+UI+%2F+Atomic+CSS,Interactive+Reader,Active;API+Gateway,FastAPI+%2F+WebSocket,RAG+%26+Streaming,Active;Background+Worker,RabbitMQ+%2F+TranslateGemma,Async+Translation,Active;Observability,Datadog+%2F+DogStatsD,Telemetry+%26+Audit,Active&theme=glass-dark)
 
 ```mermaid
 flowchart TD

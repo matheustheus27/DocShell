@@ -1,11 +1,16 @@
 ---
 title: "Comandos CLI e Automação"
-description: "Referência completa de comandos do Taskfile e Makefile"
+description: "Referência completa de comandos do Taskfile e Makefile no GlassHub DocShell"
 ---
 
 # Comandos CLI e Automação
 
-O DocShell suporta passagem de parâmetros flexíveis para escolha de runtime e modelo visual.
+<p>
+  <img src="https://glass-hub-engine.vercel.app/api/badge?label=CLI&text=Taskfile+%26+Makefile&theme=glass-dark&icon=terminal" alt="CLI" />
+  <img src="https://glass-hub-engine.vercel.app/api/badge?label=Automation&text=Cross-Platform&theme=glass-dark&icon=gear" alt="Automation" />
+</p>
+
+O **GlassHub DocShell** suporta passagem de parâmetros flexíveis para escolha de runtime e modelo visual.
 
 ## Comandos com Taskfile
 

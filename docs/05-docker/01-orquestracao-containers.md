@@ -1,15 +1,15 @@
 ---
 title: "Docker e Orquestração de Containers"
-description: "Execução simplificada em containers Docker"
+description: "Execução simplificada em containers Docker no GlassHub DocShell"
 ---
 
 # Docker e Orquestração de Containers
 
-Todas as versões do DocShell (Python, PHP, JavaScript e serviço de RAG) possuem imagens Docker otimizadas.
+Todas as versões do **GlassHub DocShell** (Python, PHP, JavaScript e serviço de RAG) possuem imagens Docker otimizadas.
 
 ## Subindo o Ambiente por Linguagem (Compose Profiles)
 
-O DocShell suporta **Docker Compose Profiles** inteligentes, permitindo subir apenas os serviços da linguagem desejada em porta unificada (`8000`):
+O **GlassHub DocShell** suporta **Docker Compose Profiles** inteligentes, permitindo subir apenas os serviços da linguagem desejada em porta unificada (`8000`):
 
 ```bash
 # Iniciar stack Python (Nginx + FastAPI + Worker + RabbitMQ + Redis + Ollama + Datadog)
@@ -26,6 +26,8 @@ task docker:down
 ```
 
 ## Arquitetura de Contêineres
+
+![GlassHub DocShell Container Services](https://glass-hub-engine.vercel.app/api/table?title=GlassHub+DocShell+Container+Orchestration&columns=Service,Exposed+Port,Image+%2F+Stack,Purpose&rows=docshell-web,8000,Nginx+Alpine,Frontend+Web+%26+Proxy;docshell-rag,8080,FastAPI+Python+3.12,API+Gateway+%26+RAG;docshell-worker,-,Python+3.12+Worker,TranslateGemma+Consumer;docshell-rabbitmq,5672+%2F+15672,RabbitMQ+Management,AMQP+Message+Broker&theme=glass-dark)
 
 | Serviço | Porta Exposta | Stack / Imagem | Função |
 | :--- | :---: | :--- | :--- |

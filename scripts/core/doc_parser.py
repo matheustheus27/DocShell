@@ -277,23 +277,47 @@ def scan_docs_directory(docs_dir: Path, locale: str = "pt-BR") -> List[Dict[str,
 
 def normalize_image_paths(body: str, source_file: Path, root_dir: Path, target_mode: str = "pdf") -> str:
     """
-    Normalizes markdown image paths ![alt](path):
-    - For PDF: Points to images/ or ../images/ with automatic SVG->PNG fallback for XeLaTeX.
-    - For Web: Points to images/<file>.
+    Normalizes markdown image paths ![alt](path) and HTML <img> tags:
+    - For PDF: Points to images/ or ../images/ with automatic SVG->PNG fallback for XeLaTeX,
+      and converts remote GlassHub Engine API image URLs to local assets/placeholders so XeLaTeX doesn't require Inkscape.
+    - For Web: Keeps full HTML and markdown URLs intact.
     """
     images_dir = root_dir / "images"
 
-    def replace_img(match):
-        alt = match.group(1)
-        src = match.group(2).strip()
-        
-        if src.startswith("http://") or src.startswith("https://") or src.startswith("data:"):
-            return match.group(0)
+    if target_mode == "pdf":
+        # Convert HTML <img src="...logo..."> to local logo image for PDF
+        body = re.sub(
+            r'<img\s+[^>]*src=["\']https://glass-hub-engine\.vercel\.app/api/logo[^"\']*["\'][^>]*>',
+            r'![GlassHub DocShell Logo](images/logo.svg)',
+            body,
+            flags=re.IGNORECASE
+        )
+        # Remove HTML badges from PDF output to prevent LaTeX svg package errors
+        body = re.sub(
+            r'<img\s+[^>]*src=["\']https://glass-hub-engine\.vercel\.app/api/badge[^"\']*["\'][^>]*>',
+            r'',
+            body,
+            flags=re.IGNORECASE
+        )
+        # Remove HTML container tags in PDF output
+        body = re.sub(r'<div\s+align=["\']center["\']>', '', body, flags=re.IGNORECASE)
+        body = re.sub(r'</div>', '', body, flags=re.IGNORECASE)
 
-        clean_src = src.replace("\\", "/")
-        img_name = clean_src.split("images/")[-1] if "images/" in clean_src else Path(clean_src).name
+        def replace_md_img(match):
+            alt = match.group(1)
+            src = match.group(2).strip()
+            
+            if "glass-hub-engine.vercel.app/api/logo" in src:
+                return f"![{alt}](images/logo.svg)"
+            elif "glass-hub-engine.vercel.app/api/" in src:
+                return f"**[{alt}]**" if alt else ""
 
-        if target_mode == "pdf":
+            if src.startswith("http://") or src.startswith("https://") or src.startswith("data:"):
+                return match.group(0)
+
+            clean_src = src.replace("\\", "/")
+            img_name = clean_src.split("images/")[-1] if "images/" in clean_src else Path(clean_src).name
+
             target_img_name = img_name
             if img_name.lower().endswith(".svg"):
                 png_counterpart = Path(img_name).stem + ".png"
@@ -301,10 +325,19 @@ def normalize_image_paths(body: str, source_file: Path, root_dir: Path, target_m
                     target_img_name = png_counterpart
             
             return f"![{alt}](images/{target_img_name})"
-        else:
+
+        return re.sub(r"!\[(.*?)\]\((.*?)\)", replace_md_img, body)
+    else:
+        def replace_web_img(match):
+            alt = match.group(1)
+            src = match.group(2).strip()
+            if src.startswith("http://") or src.startswith("https://") or src.startswith("data:"):
+                return match.group(0)
+            clean_src = src.replace("\\", "/")
+            img_name = clean_src.split("images/")[-1] if "images/" in clean_src else Path(clean_src).name
             return f"![{alt}](images/{img_name})"
 
-    return re.sub(r"!\[(.*?)\]\((.*?)\)", replace_img, body)
+        return re.sub(r"!\[(.*?)\]\((.*?)\)", replace_web_img, body)
 
 
 def generate_consolidated_markdown(

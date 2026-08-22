@@ -46,11 +46,21 @@ class DocShellRAG:
         self.active_model = self._detect_ollama_model()
 
     def _load_index(self):
-        if self.index_path.exists():
-            try:
-                self._chunks = json.loads(self.index_path.read_text(encoding="utf-8"))
-            except Exception:
-                self._chunks = []
+        candidates = [
+            self.root_dir / "data" / "search_index.json",
+            self.root_dir / "publication" / "search_index.json",
+            self.root_dir / "dist" / "webpage" / "frontend" / "data" / "search_index.json",
+            self.root_dir / "frontend" / "data" / "search_index.json",
+            Path("/site/data/search_index.json"),
+        ]
+        for p in candidates:
+            if p.exists():
+                try:
+                    self._chunks = json.loads(p.read_text(encoding="utf-8"))
+                    if isinstance(self._chunks, list) and self._chunks:
+                        break
+                except Exception:
+                    self._chunks = []
 
     def _detect_ollama_model(self) -> str:
         """Verifica quais modelos estão instalados no Ollama local e seleciona o mais adequado."""
@@ -157,7 +167,7 @@ class DocShellRAG:
         }
         target_lang = locale_names.get(locale, "Português")
 
-        prompt = f"""You are the technical documentation AI assistant for DocShell.
+        prompt = f"""You are the technical documentation AI assistant for GlassHub DocShell.
 Answer the user query accurately in {target_lang} ({locale}) in a clear, professional, didactic, and well-structured Markdown format.
 Base your answer strictly on the DOCUMENTATION CONTEXT below.
 

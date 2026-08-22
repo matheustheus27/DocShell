@@ -1,13 +1,13 @@
 ---
 title: "Componentes do Sistema"
-description: "Detalhamento dos módulos do DocShell"
+description: "Detalhamento dos módulos e componentes atômicos do GlassHub DocShell"
 ---
 
 # Componentes do Sistema
 
-Abaixo está o diagrama representativo da arquitetura de componentes do DocShell:
+Abaixo está a matriz de componentes e a hierarquia funcional do **GlassHub DocShell**:
 
-![Diagrama de Arquitetura](images/architecture-diagram.svg)
+![GlassHub DocShell Component Hierarchy](https://glass-hub-engine.vercel.app/api/table?title=GlassHub+DocShell+Component+Hierarchy&columns=Component,Atomic+Level,Tech+Stack,Function&rows=DocParser,Core+Atom,Python,Numeric+Doc+Parser;WebGenerators,Organism,Py+%2F+PHP+%2F+Node,Tripartite+Site+Builder;RAGEngine,Organism,FastAPI+%2F+VectorDB,Semantic+Search+%26+LLM;TranslationWorker,Organism,RabbitMQ+%2F+Gemma,Background+i18n;ThemeSystem,Atomic+CSS,Glassmorphic+Design,Tokens+%26+Cosmic+UI&theme=glass-dark)
 
 ## Descrição dos Módulos
 

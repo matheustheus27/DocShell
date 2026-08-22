@@ -35,6 +35,7 @@ def init_rag_service(site_root: Path, cache_dir: Path, root_dir: Path):
     candidates = [
         site_root / "data" / "search_index.json",
         site_root / "search_index.json",
+        root_dir / "data" / "search_index.json",
         root_dir / "dist" / "webpage" / "frontend" / "data" / "search_index.json",
         root_dir / "dist" / "webpage" / "data" / "search_index.json",
         root_dir / "publication" / "search_index.json"

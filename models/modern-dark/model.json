@@ -1,7 +1,7 @@
 {
   "id": "modern-dark",
   "name": "Modern Dark Theme",
-  "description": "Visual escuro profundo com alto contraste, acentos neon e tipografia para desenvolvedores.",
+  "description": "Deep obsidian dark visual with high contrast, neon accents, and developer-focused typography.",
   "tokens": {
     "colors": {
       "primary": "#8b5cf6",

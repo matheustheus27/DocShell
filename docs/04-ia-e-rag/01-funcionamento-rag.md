@@ -1,11 +1,17 @@
 ---
 title: "IA Generativa e RAG"
-description: "Como funciona a busca semântica e o assistente de IA"
+description: "Como funciona a busca semântica e o assistente de IA no GlassHub DocShell"
 ---
 
 # Inteligência Artificial e RAG
 
-O DocShell possui um assistente de IA integrado diretamente nas páginas da documentação web através do padrão **RAG (Retrieval-Augmented Generation)**.
+<p>
+  <img src="https://glass-hub-engine.vercel.app/api/badge?label=AI+Engine&text=RAG+%2B+Ollama&theme=glass-dark&icon=sparkles" alt="AI Engine" />
+  <img src="https://glass-hub-engine.vercel.app/api/badge?label=Model&text=LLaMA+3.2&theme=glass-dark&icon=gear" alt="Model" />
+  <img src="https://glass-hub-engine.vercel.app/api/badge?label=Translation&text=TranslateGemma&theme=glass-dark&icon=sparkles" alt="Translation" />
+</p>
+
+O **GlassHub DocShell** possui um assistente de IA integrado diretamente nas páginas da documentação web através do padrão **RAG (Retrieval-Augmented Generation)**.
 
 ## Arquitetura do RAG
 

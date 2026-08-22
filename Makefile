@@ -1,5 +1,5 @@
 # ==============================================================================
-# DocShell - Makefile for Linux, macOS and WSL
+# GlassHub DocShell - Makefile for Linux, macOS and WSL
 # ==============================================================================
 
 .PHONY: default install document pdf site serve validate docs build clean report docker-python docker-php docker-node docker-up docker-down docker-logs
@@ -12,7 +12,7 @@ ALL ?= 0
 
 default:
 	@echo "================================================================="
-	@echo "DocShell - Available Commands:"
+	@echo "GlassHub DocShell - Available Commands:"
 	@echo "  make install               Install all compilers, runtimes and libraries"
 	@echo "  make document              Consolidate docs/ with numeric ordering and TOC"
 	@echo "  make pdf [MODEL=theme]     Generate versioned PDF in dist/pdf/"

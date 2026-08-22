@@ -16,7 +16,14 @@ from scripts.rag.services.translation_worker import trans_worker
 
 router = APIRouter(tags=["Documents"])
 
-ROOT_DIR = Path(__file__).resolve().parents[3]
+def _resolve_root() -> Path:
+    current = Path(__file__).resolve()
+    for p in current.parents:
+        if (p / "docs").exists() or (p / "publication").exists() or (p / "scripts").exists():
+            return p
+    return Path("/app") if Path("/app").exists() else current.parent
+
+ROOT_DIR = _resolve_root()
 SITE_ROOT = Path("/site") if Path("/site").exists() else (ROOT_DIR / "dist" / "webpage" / "frontend")
 
 

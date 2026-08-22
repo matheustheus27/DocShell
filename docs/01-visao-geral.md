@@ -1,15 +1,17 @@
 ---
 title: "Visão Geral e Objetivos"
-description: "Contexto, motivação e capacidades centrais do DocShell"
+description: "Contexto, motivação e capacidades centrais do GlassHub DocShell"
 ---
 
 # Visão Geral do Sistema
 
-O **DocShell** foi projetado para resolver a complexidade de manter documentações sincronizadas, profissionais e facilmente consumíveis por diferentes perfis de usuários (engenheiros, gestores, clientes e novos integrantes de equipe).
+O **GlassHub DocShell** foi projetado para resolver a complexidade de manter documentações sincronizadas, profissionais e facilmente consumíveis por diferentes perfis de usuários (engenheiros, gestores, clientes e novos integrantes de equipe).
+
+![GlassHub DocShell Capabilities Matrix](https://glass-hub-engine.vercel.app/api/table?title=GlassHub+DocShell+Core+Capabilities&columns=Capability,Specification,Engine+Integration,Status&rows=Multi-Runtime,Python+%2F+PHP+%2F+Node.js,Tripartite+Web+Build,Active;Smart+Numeric+Parser,Natural+Sorting+00-99,TOC+%26+ScrollSpy,Active;AI+Assistant,RAG+%2B+WebSocket,Ollama+LLaMA+3.2,Active;Async+Translation,RabbitMQ+%2B+Worker,TranslateGemma,Active;Design+System,Atomic+Architecture,GlassHub+Engine+SVG,Active&theme=glass-dark)
 
 ```mermaid
 flowchart TD
-    subgraph DocshellEngine [DOCSHELL ENGINE]
+    subgraph DocshellEngine [GLASSHUB DOCSHELL ENGINE]
         A["📄 Markdown Docs (docs/)"] --> B["⚙️ Smart Numeric Parser"]
         B --> C["📑 Table of Contents (TOC)"]
         
@@ -45,7 +47,7 @@ flowchart TD
 
 4. **Modelos de Design Selecionáveis (-m / --model)**:
    Temas pré-configurados:
-   - **Glassmorphic**: Visual refinado com vidro fosco (*frosted glass*), gradientes e efeito blur.
+   - **Glassmorphic**: Visual refinado com vidro fosco (*frosted glass*), gradientes e efeito blur integrados ao **GlassHub Engine**.
    - **Corporate**: Estilo sóbrio, executivo e estruturado.
    - **Modern-Dark**: Visual escuro de alto contraste voltado para desenvolvedores.
    - **Minimal**: Foco em leitura limpa e ultrarrápida.

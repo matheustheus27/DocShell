@@ -263,6 +263,16 @@ def build_python_site(model_name: str | None = None, locale: str = "pt-BR") -> i
         if req_src.exists():
             shutil.copy2(req_src, dist_backend / "requirements.txt")
 
+        # Copy publication config into backend for self-contained operation
+        pub_src = ROOT_DIR / "publication"
+        if pub_src.exists():
+            shutil.copytree(pub_src, dist_backend / "publication", dirs_exist_ok=True)
+
+        # Copy data folder into backend
+        (dist_backend / "data").mkdir(parents=True, exist_ok=True)
+        if (dist_frontend / "data").exists():
+            shutil.copytree(dist_frontend / "data", dist_backend / "data", dirs_exist_ok=True)
+
         # Standalone Backend Dockerfile
         (dist_backend / "Dockerfile").write_text(
             """FROM python:3.12-slim
@@ -298,6 +308,17 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
         shutil.copytree(ROOT_DIR / "scripts" / "rag", dist_worker / "scripts" / "rag", dirs_exist_ok=True)
     if worker_src_dir.exists():
         shutil.copytree(worker_src_dir, dist_worker / "scripts" / "worker", dirs_exist_ok=True)
+
+    pub_src = ROOT_DIR / "publication"
+    if pub_src.exists():
+        shutil.copytree(pub_src, dist_worker / "publication", dirs_exist_ok=True)
+    (dist_worker / "data").mkdir(parents=True, exist_ok=True)
+    if (dist_frontend / "data").exists():
+        shutil.copytree(dist_frontend / "data", dist_worker / "data", dirs_exist_ok=True)
+
+    # Copy publication config into dist_web root
+    if pub_src.exists():
+        shutil.copytree(pub_src, dist_web / "publication", dirs_exist_ok=True)
 
     # Standalone Worker Dockerfile
     (dist_worker / "Dockerfile").write_text(
@@ -616,22 +637,22 @@ The documentation website will be available at: **http://localhost:8000**
     </script>
 </head>
 <body>
-    <!-- Top Navigation Header -->
-    <header class="doc-header">
-        <a href="#" class="brand-container">
-            <img src="images/logo.svg" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
-            <span class="brand-title">Doc<span>Shell</span></span>
-            <span class="badge-tag">{html.escape(release)}</span>
+    <!-- Top Navigation Header (Organism: Header) -->
+    <header class="doc-header organism-header">
+        <a href="#" class="brand-container molecule-brand">
+            <img src="https://glass-hub-engine.vercel.app/api/logo?project=docshell&animated=true&width=40&height=40" alt="GlassHub DocShell Logo" class="brand-logo atom-logo" onerror="this.src='images/logo.svg'">
+            <span class="brand-title">GlassHub <span>DocShell</span></span>
+            <span class="badge-tag atom-badge">{html.escape(release)}</span>
         </a>
         
-        <div class="search-container">
+        <div class="search-container molecule-search">
             <span class="search-icon">&#128269;</span>
-            <input type="text" id="docSearchInput" class="search-input" placeholder="{html.escape(search_lbl)}">
+            <input type="text" id="docSearchInput" class="search-input atom-input" placeholder="{html.escape(search_lbl)}">
         </div>
 
-        <div class="header-actions">
+        <div class="header-actions molecule-actions">
             <!-- 9-Language Selector -->
-            <select id="docLocaleSelector" class="locale-select" title="Select Language">
+            <select id="docLocaleSelector" class="locale-select atom-select" title="Select Language">
                 {locale_options_str}
             </select>
             <span style="font-size:0.85rem; color:var(--text-secondary);">Runtime: <strong>Python</strong></span>

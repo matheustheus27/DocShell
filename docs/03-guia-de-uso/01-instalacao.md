@@ -1,13 +1,15 @@
 ---
 title: "Guia de Instalação e Pré-requisitos"
-description: "Como preparar o ambiente para utilizar o DocShell"
+description: "Como preparar o ambiente para utilizar o GlassHub DocShell"
 ---
 
 # Guia de Instalação e Pré-requisitos
 
-O DocShell foi construído para funcionar com o mínimo de fricção. Escolha o seu ambiente de desenvolvimento habitual.
+O **GlassHub DocShell** foi construído para funcionar com o mínimo de fricção. Escolha o seu ambiente de desenvolvimento habitual.
 
 ## Pré-requisitos Básicos
+
+![GlassHub DocShell Prerequisites Matrix](https://glass-hub-engine.vercel.app/api/table?title=GlassHub+DocShell+Prerequisites&columns=Tool,Purpose,Windows+Install,Linux+Install&rows=Taskfile,CLI+Automation,winget+install+Task.Task,curl+install.sh;Python+3.12,Runtime+%26+Parser,winget+install+Python,apt+install+python3;Docker,Containerization,winget+install+Docker,apt+install+docker.io;Pandoc,PDF+Compiler,winget+install+Pandoc,apt+install+pandoc&theme=glass-dark)
 
 | Ferramenta | Uso | Instalação no Windows | Instalação no Linux (Ubuntu/Debian) |
 |---|---|---|---|
@@ -22,8 +24,8 @@ O DocShell foi construído para funcionar com o mínimo de fricção. Escolha o 
 ## Clonando e Iniciando
 
 ```bash
-git clone https://github.com/empresa/DocShell.git
-cd DocShell
+git clone https://github.com/matheustheus27/GlassHubDocShell.git
+cd GlassHubDocShell
 
 # Listar tarefas disponíveis
 task --list

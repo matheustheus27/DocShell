@@ -1,5 +1,5 @@
 # ==============================================================================
-# DocShell - Cross-Platform Automation (Taskfile)
+# GlassHub DocShell - Cross-Platform Automation (Taskfile)
 # Documentation: https://taskfile.dev
 # Installation: winget install Task.Task (Windows) | sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d (Linux)
 # ==============================================================================

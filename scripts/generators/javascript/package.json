@@ -1,13 +1,13 @@
 {
-  "name": "docshell-js-generator",
+  "name": "glasshub-docshell-js-generator",
   "version": "1.0.0",
-  "description": "DocShell Web documentation generator and server in Node.js",
+  "description": "GlassHub DocShell Web documentation generator and server in Node.js",
   "main": "serve_site.js",
   "scripts": {
     "build": "node build_site.js",
     "start": "node serve_site.js"
   },
-  "keywords": ["docshell", "markdown", "documentation", "rag"],
-  "author": "DocShell Team",
+  "keywords": ["glasshub", "docshell", "markdown", "documentation", "rag"],
+  "author": "Matheus Ferreira - GlassHub Ecosystem",
   "license": "CC-BY-NC-4.0"
 }
